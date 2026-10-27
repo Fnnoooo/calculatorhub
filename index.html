@@ -1,22 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-  <title>Learning Hub</title>
-</head>
-<body>
-  <script>
-    
-(() => {
-document.open();
-document.write(`<!DOCTYPE html>
-<html lang="en">
-<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title></title>
+<title>Unknown's Learning Hub</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:linear-gradient(160deg,#090b12,#151b2b);color:#f4f6ff;font-family:Arial,sans-serif;padding:20px}
@@ -28,6 +15,7 @@ p{color:#aeb8cc;line-height:1.5}
 button,input,textarea{font:inherit;border-radius:12px;padding:13px}
 button{border:0;background:#eaf0ff;color:#101523;font-weight:bold;cursor:pointer}
 button:active{transform:scale(.98)}
+button:disabled{opacity:.6;cursor:wait}
 .primary{width:100%;margin-top:10px}
 .secondary{background:#272f42;color:#fff;border:1px solid #3b455d}
 input,textarea{width:100%;border:1px solid #424c64;background:#0e1320;color:white;outline:none}
@@ -165,6 +153,7 @@ body.viewer-fullscreen{padding:0!important}
 <script>
 (function(){
 "use strict";
+
 const $ = id => document.getElementById(id);
 
 let startupTimer = null;
@@ -183,8 +172,8 @@ function startStartupCountdown(){
   $("app").classList.add("hidden");
 
   startupTimer = setInterval(() => {
-    count -= 1;
-    $("startupCount").textContent = String(Math.max(count, 0));
+    count--;
+    $("startupCount").textContent = String(Math.max(count,0));
 
     if(count <= 0){
       clearInterval(startupTimer);
@@ -195,7 +184,7 @@ function startStartupCountdown(){
       $("loginStatus").textContent = "";
       $("passcode").focus();
     }
-  }, 1000);
+  },1000);
 }
 
 function unlock(){
@@ -213,19 +202,22 @@ function unlock(){
   }
 }
 
-$("loginForm").addEventListener("submit", e => {
+$("loginForm").addEventListener("submit",e=>{
   e.preventDefault();
   unlock();
 });
 
 function showPage(page){
-  $("calc").classList.toggle("hidden", page !== "calc");
-  $("versions").classList.toggle("hidden", page !== "versions");
-  $("learningPanel").classList.toggle("hidden", page !== "learning");
-  $("codePanel").classList.toggle("hidden", page !== "code");
+  $("calc").classList.toggle("hidden",page !== "calc");
+  $("versions").classList.toggle("hidden",page !== "versions");
+  $("learningPanel").classList.toggle("hidden",page !== "learning");
+  $("codePanel").classList.toggle("hidden",page !== "code");
 
-  if(page === "calc") $("calc").scrollIntoView({behavior:"smooth"});
-  else window.scrollTo({top:0,behavior:"smooth"});
+  if(page === "calc"){
+    $("calc").scrollIntoView({behavior:"smooth"});
+  }else{
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
 }
 
 $("showCalc").onclick = () => showPage("calc");
@@ -234,43 +226,58 @@ $("showLearning").onclick = () => showPage("learning");
 $("showCode").onclick = () => showPage("code");
 $("backHome").onclick = () => showPage("calc");
 
-document.querySelectorAll("[data-back]").forEach(button => {
-  button.addEventListener("click", () => showPage("calc"));
+document.querySelectorAll("[data-back]").forEach(button=>{
+  button.addEventListener("click",()=>showPage("calc"));
 });
 
 const display = $("display");
 
-document.querySelectorAll("[data-val]").forEach(button => {
-  button.addEventListener("click", () => {
-    if(display.value === "0" || display.value === "Invalid" || display.value === "Error"){
+document.querySelectorAll("[data-val]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    if(["0","Invalid","Error"].includes(display.value)){
       display.value = "";
     }
     display.value += button.dataset.val;
   });
 });
 
-document.querySelectorAll("[data-fn]").forEach(button => {
-  button.addEventListener("click", () => {
+document.querySelectorAll("[data-fn]").forEach(button=>{
+  button.addEventListener("click",()=>{
     const fn = button.dataset.fn;
     const raw = display.value.trim();
 
-    if(fn === "clear"){ display.value = "0"; return; }
-    if(fn === "back"){ display.value = display.value.slice(0,-1) || "0"; return; }
-    if(fn === "pi"){ display.value = String(Math.PI); return; }
+    if(fn === "clear"){
+      display.value = "0";
+      return;
+    }
+
+    if(fn === "back"){
+      display.value = display.value.slice(0,-1) || "0";
+      return;
+    }
+
+    if(fn === "pi"){
+      display.value = String(Math.PI);
+      return;
+    }
 
     if(fn === "equals"){
-      if(!/^[0-9+*/().\\s-]+$/.test(raw)){
+      if(!/^[0-9+*/().\s-]+$/.test(raw)){
         display.value = "Invalid";
         return;
       }
+
       try{
         const result = Function('"use strict";return ('+raw+')')();
         display.value = Number.isFinite(result) ? String(result) : "Error";
-      }catch(e){ display.value = "Error"; }
+      }catch(e){
+        display.value = "Error";
+      }
       return;
     }
 
     const n = Number(raw);
+
     if(raw === "" || !Number.isFinite(n)){
       display.value = "Error";
       return;
@@ -288,16 +295,19 @@ document.querySelectorAll("[data-fn]").forEach(button => {
 
 function clearLearningTimer(){
   learningRequestNumber++;
+
   if(learningTimer !== null){
     clearInterval(learningTimer);
     learningTimer = null;
   }
+
   $("learningCount").classList.add("hidden");
   $("loadLearning").disabled = false;
 }
 
-$("loadLearning").addEventListener("click", () => {
+$("loadLearning").addEventListener("click",()=>{
   clearLearningTimer();
+
   const request = learningRequestNumber;
   const status = $("learningStatus");
   let url;
@@ -322,18 +332,22 @@ $("loadLearning").addEventListener("click", () => {
   status.textContent = "Opening website in 3 seconds...";
 
   let count = 3;
-  learningTimer = setInterval(() => {
+
+  learningTimer = setInterval(()=>{
     if(request !== learningRequestNumber) return;
+
     count--;
     $("learningCount").textContent = String(Math.max(count,0));
 
     if(count <= 0){
       clearInterval(learningTimer);
       learningTimer = null;
+
       $("learningCount").classList.add("hidden");
       $("loadLearning").disabled = false;
       $("learningFrame").classList.remove("hidden");
       $("learningFrame").src = url.href;
+
       status.textContent = "Requested the page. Some websites block embedding.";
     }
   },1000);
@@ -341,15 +355,17 @@ $("loadLearning").addEventListener("click", () => {
 
 function clearCodeTimer(){
   codeRequestNumber++;
+
   if(codeTimer !== null){
     clearInterval(codeTimer);
     codeTimer = null;
   }
+
   $("codeCount").classList.add("hidden");
   $("loadCode").disabled = false;
 }
 
-$("loadCode").addEventListener("click", () => {
+$("loadCode").addEventListener("click",()=>{
   clearCodeTimer();
 
   const request = codeRequestNumber;
@@ -369,21 +385,21 @@ $("loadCode").addEventListener("click", () => {
   status.textContent = "Loading code in 3 seconds...";
 
   let count = 3;
-  codeTimer = setInterval(() => {
+
+  codeTimer = setInterval(()=>{
     if(request !== codeRequestNumber) return;
+
     count--;
     $("codeCount").textContent = String(Math.max(count,0));
 
     if(count <= 0){
       clearInterval(codeTimer);
       codeTimer = null;
+
       $("codeCount").classList.add("hidden");
       $("loadCode").disabled = false;
-
       $("codeFrame").classList.remove("hidden");
 
-      // Render the pasted HTML inside the separate iframe.
-      // JavaScript in the pasted document can run normally.
       $("codeFrame").srcdoc = code;
       status.textContent = "Code loaded into the viewer.";
     }
@@ -397,9 +413,9 @@ function closeLearning(){
   $("learningStatus").textContent = "Learning viewer closed.";
 }
 
-$("closeLearning").addEventListener("click", closeLearning);
+$("closeLearning").addEventListener("click",closeLearning);
 
-$("closeCode").addEventListener("click", () => {
+$("closeCode").addEventListener("click",()=>{
   clearCodeTimer();
   $("codeFrame").srcdoc = "";
   $("codeFrame").src = "about:blank";
@@ -408,13 +424,10 @@ $("closeCode").addEventListener("click", () => {
 });
 
 function requestViewerFullscreen(frame){
-  if(!frame || frame.classList.contains("hidden")){
-    return;
-  }
+  if(!frame || frame.classList.contains("hidden")) return;
 
   if(frame.requestFullscreen){
-    frame.requestFullscreen().catch(() => {
-      // Fallback below if browser fullscreen is unavailable.
+    frame.requestFullscreen().catch(()=>{
       frame.classList.add("fullscreen-frame");
       document.body.classList.add("viewer-fullscreen");
     });
@@ -424,31 +437,27 @@ function requestViewerFullscreen(frame){
   }
 }
 
-$("fullLearning").addEventListener("click", () => {
+$("fullLearning").addEventListener("click",()=>{
   requestViewerFullscreen($("learningFrame"));
 });
 
-$("fullCode").addEventListener("click", () => {
+$("fullCode").addEventListener("click",()=>{
   requestViewerFullscreen($("codeFrame"));
 });
 
-document.addEventListener("fullscreenchange", () => {
+document.addEventListener("fullscreenchange",()=>{
   if(!document.fullscreenElement){
-    document.querySelectorAll(".fullscreen-frame").forEach(frame => {
+    document.querySelectorAll(".fullscreen-frame").forEach(frame=>{
       frame.classList.remove("fullscreen-frame");
     });
+
     document.body.classList.remove("viewer-fullscreen");
   }
 });
 
 startStartupCountdown();
-})();
-<\/script>
-</body>
-</html>`);
-document.close();
-})();
 
-  </script>
+})();
+</script>
 </body>
 </html>
