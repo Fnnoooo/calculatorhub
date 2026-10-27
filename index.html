@@ -1,661 +1,384 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CalcuIator.com</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Custom Styling -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #0f172a;
-      color: #f8fafc;
-      min-height: 100vh;
-      width: 100%;
-      margin: 0;
-      overflow-x: hidden;
-    }
-
-    .font-mono-custom {
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* Glassmorphism styling */
-    .glass-panel {
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .glass-btn {
-      background: rgba(51, 65, 85, 0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .glass-btn:hover {
-      background: rgba(71, 85, 105, 0.8);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .glass-btn:active {
-      transform: translateY(0);
-    }
-
-    .game-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .game-card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-
-    /* Custom scrollbars */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
-    /* Embed-friendly sizing: the page and game player fill their host iframe. */
-    html { min-height: 100%; width: 100%; }
-    #gameModal { height: 100vh; height: 100dvh; }
-    #iframeWrapper { min-height: 0; }
-    #iframeContainer { min-height: 0; }
-    #iframeContainer iframe {
-      display: block;
-      width: 100%;
-      height: 100%;
-      min-height: 320px;
-      border: 0;
-      background: #000;
-    }
-    @media (max-width: 640px) {
-      #gameModal > div:first-child { gap: 8px; flex-wrap: wrap; }
-      #gameModal > div:first-child > div { flex-wrap: wrap; }
-    }
-  
-    /* Essential fallbacks if the school network blocks Tailwind's CDN. */
-    .hidden { display: none !important; }
-    html, body { width: 100%; min-height: 100%; }
-    body { box-sizing: border-box; }
-    #calculatorView, #gamesHubView { box-sizing: border-box; }
-    #gameModal { box-sizing: border-box; }
-    #iframeWrapper { min-height: 0; }
-    #iframeContainer iframe {
-      display: block;
-      width: 100%;
-      height: 100%;
-      min-height: 320px;
-      border: 0;
-      background: #000;
-    }
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #090c14;
+  --card: #171d2b;
+  --field: #0e1320;
+  --border: #303a50;
+  --text: #f4f6ff;
+  --muted: #aeb8cc;
+  --accent: #eaf0ff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(160deg, #090b12, #18233a);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.wrap { max-width: 560px; margin: 28px auto; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 12px 35px #0003;
+}
+h1 { font-size: 27px; margin: 0 0 10px; }
+h2 { font-size: 21px; margin-top: 0; }
+p { color: var(--muted); line-height: 1.5; }
+button, input { font: inherit; border-radius: 12px; }
+button {
+  padding: 13px;
+  border: 0;
+  background: var(--accent);
+  color: #101523;
+  font-weight: 650;
+  cursor: pointer;
+  transition: transform .12s, opacity .12s;
+}
+button:active { transform: scale(.98); }
+button:focus-visible, input:focus-visible {
+  outline: 2px solid #a8c1ff;
+  outline-offset: 2px;
+}
+.primary { width: 100%; margin-top: 10px; }
+.secondary {
+  background: #272f42;
+  color: white;
+  border: 1px solid #3b455d;
+}
+.row { display: flex; gap: 8px; }
+.row button { flex: 1; }
+input {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #424c64;
+  background: var(--field);
+  color: white;
+}
+input:focus { border-color: #9eb8ff; }
+.hidden { display: none !important; }
+.small { font-size: 12px; color: #9aa7bf; }
+.status { font-size: 13px; overflow-wrap: anywhere; }
+#display {
+  font-size: 26px;
+  text-align: right;
+  margin-bottom: 12px;
+}
+.keys {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.keys button { padding: 15px 4px; min-width: 0; }
+#gameFrame {
+  width: 100%;
+  height: 440px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 12px;
+  background: white;
+}
+label { display: block; margin-bottom: 8px; font-size: 14px; }
+@media (max-width: 380px) {
+  body { padding: 12px; }
+  .card { padding: 16px; }
+  .keys { gap: 6px; }
+  .keys button { padding: 13px 2px; }
+}
 </style>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-indigo-500 selection:text-white">
+<body>
+<div class="wrap">
 
-  <!-- ==================== HEADER ==================== -->
-  <header class="w-full bg-slate-900/80 border-b border-slate-800 px-6 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md">
-    <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('calc')">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-        <i class="fa-solid fa-calculator text-white text-lg"></i>
-      </div>
-      <div>
-        <h1 class="font-bold text-lg leading-none tracking-tight text-slate-100">CalcuIator.com</h1>
-        <span class="text-xs text-slate-400 font-mono-custom">v4.2 Scientific Edition</span>
-      </div>
-    </div>
+  <section class="card" id="login">
+    <h1>Unknown's Hub</h1>
+    <p>Enter your passcode to continue.</p>
+    <input id="passcode" type="password"
+           placeholder="Passcode" autocomplete="off">
+    <button class="primary" id="unlock">Continue</button>
+    <p class="small" id="loginStatus" role="status"></p>
+  </section>
 
-    <!-- Right Controls -->
-    <div class="flex items-center gap-3">
-      <button id="hubNavBtn" onclick="switchView('hub')" class="hidden px-4 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-sm font-semibold transition-all">
-        <i class="fa-solid fa-shapes mr-2"></i>Fno's Hub
+  <main id="app" class="hidden">
+    <section class="card">
+      <h1>Unknown's Hub</h1>
+      <p>Your tools, all in one place.</p>
+      <div class="row">
+        <button id="showCalc">Calculator</button>
+        <button class="secondary" id="showVersions">Versions</button>
+      </div>
+    </section>
+
+    <section class="card" id="calc">
+      <h2>Scientific Calculator</h2>
+      <input id="display" value="0" inputmode="decimal"
+             aria-label="Calculator display">
+      <div class="keys">
+        <button data-fn="clear">AC</button>
+        <button data-val="(">(</button>
+        <button data-val=")">)</button>
+        <button data-val="/">÷</button>
+
+        <button data-val="7">7</button>
+        <button data-val="8">8</button>
+        <button data-val="9">9</button>
+        <button data-val="*">×</button>
+
+        <button data-val="4">4</button>
+        <button data-val="5">5</button>
+        <button data-val="6">6</button>
+        <button data-val="-">−</button>
+
+        <button data-val="1">1</button>
+        <button data-val="2">2</button>
+        <button data-val="3">3</button>
+        <button data-val="+">+</button>
+
+        <button data-val="0">0</button>
+        <button data-val=".">.</button>
+        <button data-fn="back">⌫</button>
+        <button data-fn="equals">=</button>
+
+        <button data-fn="sin">sin</button>
+        <button data-fn="cos">cos</button>
+        <button data-fn="tan">tan</button>
+        <button data-fn="sqrt">√</button>
+
+        <button data-fn="square">x²</button>
+        <button data-fn="pi">π</button>
+        <button data-fn="log">log</button>
+        <button data-fn="ln">ln</button>
+      </div>
+      <p class="small">
+        Trigonometric functions use degrees. Example: enter 2+2 and press =.
+      </p>
+    </section>
+
+    <section class="card hidden" id="versions">
+      <h2>Versions</h2>
+      <p>Unknown's Hub</p>
+      <p>Current version: 1.02</p>
+      <button class="primary secondary" id="backHome">Back</button>
+    </section>
+
+    <section class="card" id="embedPanel">
+      <h2>Website Embed Tester</h2>
+      <p>
+        Enter an HTTPS address for a website that permits iframe embedding.
+        Some websites refuse embedding, and network filtering may block
+        requests.
+      </p>
+      <label for="embedUrl">Website URL</label>
+      <input id="embedUrl" type="url"
+             placeholder="https://example.com"
+             autocomplete="url" spellcheck="false">
+      <button class="primary" id="loadEmbed">Load Embed</button>
+      <p id="embedStatus" class="status" role="status">
+        No website loaded.
+      </p>
+      <iframe id="gameFrame" class="hidden"
+              src="about:blank"
+              title="Embedded website"
+              referrerpolicy="no-referrer"
+              allowfullscreen></iframe>
+      <button class="primary secondary" id="closeEmbed">
+        Close Embed
       </button>
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold">
-        <i class="fa-solid fa-calculator text-indigo-400"></i> Mode: Math / RAD
-      </div>
-    </div>
-  </header>
-
-  <!-- ==================== CALCULATOR ==================== -->
-  <main id="calculatorView" class="flex-grow flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-lg glass-panel p-6 rounded-3xl shadow-2xl border border-slate-700/50">
-      
-      <!-- Scientific Mode Indicators Header -->
-      <div class="flex items-center justify-between mb-3 px-1 text-[11px] text-slate-400 font-mono-custom">
-        <div class="flex items-center gap-2">
-          <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">DEG</span>
-          <span class="text-slate-600">RAD</span>
-          <span class="text-slate-600">GRAD</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-slate-500"><i class="fa-solid fa-memory text-[10px] mr-1"></i>M: 0</span>
-          <span class="text-emerald-400"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i> READY</span>
-        </div>
-      </div>
-
-      <!-- Calculator Screen -->
-      <div class="mb-4 bg-slate-950/80 p-5 rounded-2xl border border-slate-800 text-right shadow-inner">
-        <div id="calcHistory" class="text-slate-500 text-xs font-mono-custom h-4 mb-1 overflow-hidden">FX-991EX Scientific Expression</div>
-        <div id="calcDisplay" class="text-slate-100 text-4xl font-mono-custom font-bold tracking-wider overflow-x-auto whitespace-nowrap scrollbar-none">0</div>
-      </div>
-
-      <!-- Scientific Function Toolbar -->
-      <div class="grid grid-cols-5 gap-2 mb-3">
-        <button onclick="calcPress('Math.sin(')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">sin</button>
-        <button onclick="calcPress('Math.cos(')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">cos</button>
-        <button onclick="calcPress('Math.tan(')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">tan</button>
-        <button onclick="calcPress('Math.log10(')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">log</button>
-        <button onclick="calcPress('Math.sqrt(')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">√</button>
-        <button onclick="calcPress('Math.PI')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">π</button>
-        <button onclick="calcPress('Math.E')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">e</button>
-        <button onclick="calcPress('**')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">x^y</button>
-        <button onclick="calcPress('%')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">%</button>
-        <button onclick="calcPress('1/')" class="glass-btn py-2 px-1 rounded-lg text-indigo-300 text-xs font-mono-custom">1/x</button>
-      </div>
-
-      <!-- Keypad -->
-      <div class="grid grid-cols-4 gap-3">
-        <!-- Row 1 -->
-        <button onclick="calcClear()" class="glass-btn p-4 rounded-xl text-red-400 font-bold text-lg">C</button>
-        <button onclick="calcPress('(')" class="glass-btn p-4 rounded-xl text-indigo-400 font-bold text-lg">(</button>
-        <button onclick="calcPress(')')" class="glass-btn p-4 rounded-xl text-indigo-400 font-bold text-lg">)</button>
-        <button onclick="calcPress('/')" class="glass-btn p-4 rounded-xl text-amber-400 font-bold text-lg">÷</button>
-        
-        <!-- Row 2 -->
-        <button onclick="calcPress('7')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">7</button>
-        <button onclick="calcPress('8')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">8</button>
-        <button onclick="calcPress('9')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">9</button>
-        <button onclick="calcPress('*')" class="glass-btn p-4 rounded-xl text-amber-400 font-bold text-lg">×</button>
-        
-        <!-- Row 3 -->
-        <button onclick="calcPress('4')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">4</button>
-        <button onclick="calcPress('5')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">5</button>
-        <button onclick="calcPress('6')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">6</button>
-        <button onclick="calcPress('-')" class="glass-btn p-4 rounded-xl text-amber-400 font-bold text-lg">-</button>
-        
-        <!-- Row 4 -->
-        <button onclick="calcPress('1')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">1</button>
-        <button onclick="calcPress('2')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">2</button>
-        <button onclick="calcPress('3')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">3</button>
-        <button onclick="calcPress('+')" class="glass-btn p-4 rounded-xl text-amber-400 font-bold text-lg">+</button>
-        
-        <!-- Row 5 -->
-        <button onclick="calcPress('0')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg col-span-2">0</button>
-        <button onclick="calcPress('.')" class="glass-btn p-4 rounded-xl text-slate-200 font-semibold text-lg">.</button>
-        <button onclick="calcEquals()" class="glass-btn p-4 rounded-xl bg-indigo-600/80 hover:bg-indigo-500 text-white font-bold text-lg shadow-lg">=</button>
-      </div>
-
-    </div>
+    </section>
   </main>
+</div>
 
-  <!-- ==================== HUB VIEW ==================== -->
-  <main id="gamesHubView" class="hidden flex-grow p-6 max-w-7xl mx-auto w-full">
-    
-    <!-- Title Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-800">
-      <div>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 tracking-tight mb-2">
-          Fno's Hub
-        </h1>
-        <p class="text-slate-400 text-sm">Select an option to embed or launch directly inside an <code class="bg-slate-800 px-2 py-0.5 rounded text-indigo-300">about:blank</code> tab.</p>
-      </div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
 
-      <!-- Tab Launcher Controls -->
-      <div class="flex flex-wrap items-center gap-3">
-        <button onclick="openBlankTabCurrent()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg flex items-center gap-2 transition-all">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Hub in About:Blank Tab
-        </button>
-      </div>
-    </div>
-
-    <!-- Category Filters & Search -->
-    <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-between items-center">
-      <div class="flex flex-wrap gap-2 w-full sm:w-auto" id="categoryFilters">
-        <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-lg">All Items</button>
-        <button onclick="filterCategory('action', this)" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Action & Shooter</button>
-        <button onclick="filterCategory('multiplayer', this)" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Multiplayer</button>
-        <button onclick="filterCategory('horror', this)" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Horror</button>
-      </div>
-
-      <!-- Search Input -->
-      <div class="relative w-full sm:w-64">
-        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-sm"></i>
-        <input type="text" id="gameSearch" onkeyup="searchGames()" placeholder="Search..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors">
-      </div>
-    </div>
-
-    <!-- Grid -->
-    <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <!-- Injected dynamically -->
-    </div>
-  </main>
-
-  <!-- ==================== PLAYER MODAL ==================== -->
-  <div id="gameModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-50 hidden flex flex-col">
-    <!-- Modal Header -->
-    <div class="bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <span id="modalGameIcon" class="text-xl">⚡</span>
-        <h2 id="modalGameTitle" class="font-bold text-slate-100 text-lg">Player</h2>
-        <span id="modalGameTag" class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md font-mono">2v2.lol</span>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button onclick="requestPointerLock()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors">
-          <i class="fa-solid fa-arrow-pointer"></i> Lock Mouse
-        </button>
-
-        <button onclick="toggleFullscreen()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors">
-          <i class="fa-solid fa-expand"></i> Fullscreen
-        </button>
-
-        <button id="modalCloakBtn" onclick="launchCurrentGameInBlankTab()" class="px-3 py-1.5 bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in About:Blank
-        </button>
-
-        <button onclick="closeGameModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-400 flex items-center justify-center transition-colors">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Modal Frame Container -->
-    <div class="flex-grow relative bg-black flex items-center justify-center overflow-hidden" id="iframeWrapper">
-      <div id="iframeLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950 z-10 text-center p-4">
-        <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-slate-300 font-semibold text-sm">Loading Container...</p>
-      </div>
-      <div id="iframeContainer" class="w-full h-full flex items-center justify-center" style="width:100%;height:100%;min-height:0"></div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="mt-auto py-4 text-center text-xs text-slate-600 border-t border-slate-900">
-    <p>© 2026 CalcuIator Inc. Standard Scientific Tool.</p>
-  </footer>
-
-  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
-  <script>
-    const PASSCODE = "0001";
-    let enteredCode = "";
-    let isUnlocked = false;
-    let currentGame = null;
-
-    const GAMES_LIST = [
-      {
-        id: "2v2-lol",
-        title: "2v2.lol / 1v1.lol",
-        category: "multiplayer",
-        tag: "Shooter / Building",
-        thumb: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&auto=format&fit=crop&q=80",
-        description: "Fast-paced building and shooting arena. Practice 2v2 and 1v1 duels.",
-        embedUrl: "https://2v2io.io/2v2io.embed",
-        customIframe: `<iframe id="gameIframe" src="https://2v2io.io/2v2io.embed" width="100%" height="100%" frameborder="0" border="0" scrolling="none" allow="autoplay; gamepad; fullscreen; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "fnaf-1",
-        title: "Five Nights at Freddy's",
-        category: "horror",
-        tag: "Horror / Survival",
-        thumb: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
-        description: "Survive night shifts monitoring security cameras.",
-        embedUrl: "https://scratch.mit.edu/projects/606571286/embed",
-        customIframe: `<iframe id="gameIframe" src="https://scratch.mit.edu/projects/606571286/embed" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; gamepad; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "gta-sim",
-        title: "GTA V Stunt Racing / City Sim",
-        category: "action",
-        tag: "3D Racing / Action",
-        thumb: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80",
-        description: "High-speed 3D open world car stunt simulator with custom vehicles.",
-        embedUrl: "https://game316006.konggames.com/gamez/0031/6006/live/index.html",
-        customIframe: `<iframe id="gameIframe" src="https://play.gamepix.com/madalin-stunt-cars-2/embed" width="100%" height="100%" frameborder="0" allow="autoplay; gamepad; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "retro-bowl",
-        title: "Retro Bowl",
-        category: "action",
-        tag: "Sports / Retro",
-        thumb: "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&auto=format&fit=crop&q=80",
-        description: "Manage your NFL franchise and play pixel-perfect gridiron strategy football.",
-        embedUrl: "https://game316006.konggames.com/gamez/0031/6006/live/index.html",
-        customIframe: `<iframe id="gameIframe" src="https://game316006.konggames.com/gamez/0031/6006/live/index.html" width="100%" height="100%" frameborder="0" allow="autoplay; gamepad; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "slope-3d",
-        title: "Slope 3D",
-        category: "action",
-        tag: "Runner / Arcade",
-        thumb: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80",
-        description: "Drive a ball down a steep neon 3D obstacle course at infinite speeds.",
-        embedUrl: "https://kripdev.github.io/slope/",
-        customIframe: `<iframe id="gameIframe" src="https://kripdev.github.io/slope/" width="100%" height="100%" frameborder="0" allow="autoplay; gamepad; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "bitlife-online",
-        title: "BitLife Life Simulator",
-        category: "action",
-        tag: "Simulation",
-        thumb: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
-        description: "Text-based simulator making life choices from birth to retirement.",
-        embedUrl: "https://xlines.github.io/bitlife/",
-        customIframe: `<iframe id="gameIframe" src="https://xlines.github.io/bitlife/" width="100%" height="100%" frameborder="0" allow="autoplay; gamepad; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "drift-hunters",
-        title: "Drift Hunters 3D",
-        category: "action",
-        tag: "Driving / Tuner",
-        thumb: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=80",
-        description: "Tune cars and drift across multiple race tracks with realistic physics.",
-        embedUrl: "https://webglmath.github.io/drift-hunters/",
-        customIframe: `<iframe id="gameIframe" src="https://webglmath.github.io/drift-hunters/" width="100%" height="100%" frameborder="0" allow="autoplay; gamepad; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "geometry-dash",
-        title: "Geometry Dash Lite",
-        category: "action",
-        tag: "Rhythm / Platformer",
-        thumb: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
-        description: "Jump, fly and flip your way through dark caves and spiky obstacles.",
-        embedUrl: "https://scratch.mit.edu/projects/105500895/embed",
-        customIframe: `<iframe id="gameIframe" src="https://scratch.mit.edu/projects/105500895/embed" width="100%" height="100%" frameborder="0" allow="autoplay; gamepad; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      },
-      {
-        id: "fallzone-io",
-        title: "FallZone.io",
-        category: "multiplayer",
-        tag: "Battle Royale / Physics",
-        thumb: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&auto=format&fit=crop&q=80",
-        description: "Compete in multiplayer physics knockout races and survival rounds.",
-        embedUrl: "https://fallzone.io/",
-        customIframe: `<iframe id="gameIframe" src="https://fallzone.io/" width="100%" height="100%" frameborder="0" border="0" scrolling="none" allow="autoplay; gamepad; fullscreen; pointer-lock" title="Embedded game" allow="autoplay; fullscreen; gamepad; pointer-lock; encrypted-media" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      }
-    ];
-
-    let currentCalcExpr = "";
-
-    function calcPress(val) {
-      if (currentCalcExpr === "0") currentCalcExpr = "";
-      currentCalcExpr += val;
-      enteredCode += val;
-
-      if (enteredCode.length > 4) {
-        enteredCode = enteredCode.slice(-4);
-      }
-
-      updateCalcDisplay();
-      checkPasscode();
+  // Passcode screen
+  function unlock() {
+    if ($('passcode').value === '0001') {
+      $('login').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      $('loginStatus').textContent = '';
+    } else {
+      $('loginStatus').textContent = 'Incorrect passcode.';
     }
+  }
 
-    function calcClear() {
-      currentCalcExpr = "";
-      enteredCode = "";
-      updateCalcDisplay();
+  $('unlock').addEventListener('click', unlock);
+  $('passcode').addEventListener('keydown', event => {
+    if (event.key === 'Enter') unlock();
+  });
+
+  // Main sections
+  $('showCalc').onclick = () => {
+    $('versions').classList.add('hidden');
+    $('calc').classList.remove('hidden');
+    $('calc').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  $('showVersions').onclick = () => {
+    $('calc').classList.add('hidden');
+    $('versions').classList.remove('hidden');
+    $('versions').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  $('backHome').onclick = () => {
+    $('versions').classList.add('hidden');
+    $('calc').classList.remove('hidden');
+  };
+
+  // Calculator
+  const display = $('display');
+  let freshResult = false;
+
+  function appendValue(value) {
+    if (display.value === 'Error' ||
+        display.value === 'Invalid' ||
+        (freshResult && /^[0-9.(]$/.test(value))) {
+      display.value = '';
     }
+    display.value += value;
+    freshResult = false;
+  }
 
-    function calcEquals() {
-      try {
-        if (!currentCalcExpr) return;
-        let result = eval(currentCalcExpr.replace(/×/g, '*').replace(/÷/g, '/'));
-        document.getElementById('calcHistory').innerText = currentCalcExpr + " =";
-        currentCalcExpr = String(result);
-        updateCalcDisplay();
-      } catch (err) {
-        document.getElementById('calcDisplay').innerText = "Error";
-        setTimeout(() => calcClear(), 1200);
-      }
-    }
-
-    function updateCalcDisplay() {
-      document.getElementById('calcDisplay').innerText = currentCalcExpr || "0";
-    }
-
-    function checkPasscode() {
-      if (enteredCode === PASSCODE) {
-        isUnlocked = true;
-        document.getElementById('hubNavBtn').classList.remove('hidden');
-        switchView('hub');
-      }
-    }
-
-    function switchView(view) {
-      if (view === 'hub' && !isUnlocked) return;
-
-      if (view === 'hub') {
-        document.getElementById('calculatorView').classList.add('hidden');
-        document.getElementById('gamesHubView').classList.remove('hidden');
-        renderGamesGrid(GAMES_LIST);
-      } else {
-        document.getElementById('gamesHubView').classList.add('hidden');
-        document.getElementById('calculatorView').classList.remove('hidden');
-      }
-    }
-
-    function renderGamesGrid(games) {
-      const grid = document.getElementById('gamesGrid');
-      grid.innerHTML = "";
-
-      games.forEach(game => {
-        const card = document.createElement('div');
-        card.className = "game-card glass-panel rounded-2xl overflow-hidden flex flex-col cursor-pointer border border-slate-800 hover:border-indigo-500/50 group";
-        card.onclick = () => openGameModal(game);
-
-        card.innerHTML = `
-          <div class="relative h-44 overflow-hidden bg-slate-900">
-            <img src="${game.thumb}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-            <span class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-indigo-300 text-[10px] font-bold px-2.5 py-1 rounded-md border border-slate-700/50 uppercase tracking-wider">
-              ${game.tag}
-            </span>
-          </div>
-          <div class="p-5 flex flex-col flex-grow">
-            <h3 class="font-bold text-slate-100 text-lg group-hover:text-indigo-400 transition-colors mb-1">${game.title}</h3>
-            <p class="text-xs text-slate-400 line-clamp-2 mb-4 flex-grow">${game.description}</p>
-            <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
-              <button onclick="event.stopPropagation(); launchDirectBlankTab('${game.id}')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors">
-                <i class="fa-solid fa-arrow-up-right-from-square text-emerald-400"></i> Blank Tab
-              </button>
-              <button class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md transition-all">
-                <i class="fa-solid fa-play text-[10px]"></i> Open
-              </button>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function filterCategory(cat, clickedButton) {
-      const buttons = document.querySelectorAll('.cat-btn');
-      buttons.forEach(btn => {
-        btn.className = "cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300";
-      });
-      if (clickedButton) {
-        clickedButton.className = "cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-lg";
-      }
-
-      if (cat === 'all') {
-        renderGamesGrid(GAMES_LIST);
-      } else {
-        const filtered = GAMES_LIST.filter(g => g.category === cat);
-        renderGamesGrid(filtered);
-      }
-    }
-
-    function searchGames() {
-      const q = document.getElementById('gameSearch').value.toLowerCase();
-      const filtered = GAMES_LIST.filter(g => 
-        g.title.toLowerCase().includes(q) || 
-        g.description.toLowerCase().includes(q) ||
-        g.tag.toLowerCase().includes(q)
-      );
-      renderGamesGrid(filtered);
-    }
-
-    function openGameModal(game) {
-      currentGame = game;
-      document.getElementById('modalGameTitle').innerText = game.title;
-      document.getElementById('modalGameTag').innerText = game.tag;
-      
-      const modal = document.getElementById('gameModal');
-      const container = document.getElementById('iframeContainer');
-      const loader = document.getElementById('iframeLoader');
-
-      loader.classList.remove('hidden');
-      container.innerHTML = game.customIframe;
-
-      modal.classList.remove('hidden');
-
-      const iframe = document.getElementById('gameIframe');
-      if (iframe) {
-        iframe.onload = () => {
-          loader.classList.add('hidden');
-        };
-        setTimeout(() => loader.classList.add('hidden'), 2000);
-      }
-    }
-
-    function closeGameModal() {
-      const modal = document.getElementById('gameModal');
-      const container = document.getElementById('iframeContainer');
-      container.innerHTML = "";
-      modal.classList.add('hidden');
-      currentGame = null;
-    }
-
-    function requestPointerLock() {
-      try {
-        const iframe = document.getElementById('gameIframe');
-        if (iframe && iframe.requestPointerLock) {
-          iframe.requestPointerLock();
-        } else if (document.body.requestPointerLock) {
-          document.body.requestPointerLock();
-        }
-      } catch (err) {
-        console.warn("Pointer lock restricted");
-      }
-    }
-
-    function toggleFullscreen() {
-      try {
-        const wrapper = document.getElementById('iframeWrapper');
-        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-          if (wrapper.requestFullscreen) {
-            const promise = wrapper.requestFullscreen();
-            if (promise && promise.catch) {
-              promise.catch(err => console.warn("Fullscreen error:", err));
-            }
-          } else if (wrapper.webkitRequestFullscreen) {
-            wrapper.webkitRequestFullscreen();
-          }
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          }
-        }
-      } catch (err) {
-        console.warn("Fullscreen error:", err);
-      }
-    }
-
-    function openBlankTabCurrent() {
-      const win = window.open('about:blank', '_blank');
-      if (!win) return;
-      
-      const doc = win.document;
-      doc.open();
-      doc.write(document.documentElement.outerHTML);
-      doc.close();
-
-      win.document.title = "CalcuIator.com";
-      const link = win.document.createElement('link');
-      link.rel = 'icon';
-      link.href = 'https://ssl.gstatic.com/docs/doclist/images/infinite_arrow_favicon_5.ico';
-      win.document.head.appendChild(link);
-    }
-
-    function launchDirectBlankTab(gameId) {
-      const game = GAMES_LIST.find(g => g.id === gameId);
-      if (!game) return;
-
-      const win = window.open('about:blank', '_blank');
-      if (!win) return;
-
-      const doc = win.document;
-      doc.open();
-      doc.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Google Docs</title>
-          <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/infinite_arrow_favicon_5.ico">
-          <style>
-            html, body {
-              margin: 0;
-              padding: 0;
-              width: 100%;
-              height: 100%;
-              overflow: hidden;
-              background-color: #000;
-            }
-            iframe {
-              width: 100%;
-              height: 100%;
-              border: none;
-            }
-          </style>
-        </head>
-        <body>
-          ${game.customIframe}
-        </body>
-        </html>
-      `);
-      doc.close();
-    }
-
-    function launchCurrentGameInBlankTab() {
-      if (currentGame) {
-        launchDirectBlankTab(currentGame.id);
-      }
-    }
-
-    function quickRedirect() {
-      window.location.href = "https://www.canva.com";
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (!document.getElementById('gameModal').classList.contains('hidden')) {
-          closeGameModal();
-        } else if (isUnlocked) {
-          switchView('calc');
-        }
-      }
+  document.querySelectorAll('[data-val]').forEach(button => {
+    button.addEventListener('click', () => {
+      appendValue(button.dataset.val);
     });
-  </script>
+  });
+
+  function calculate(expression) {
+    // Accept only arithmetic characters before evaluating.
+    if (!expression || expression.length > 150 ||
+        !/^[0-9+\-*/().\s]+$/.test(expression)) {
+      throw new Error('Invalid expression');
+    }
+
+    // Function is limited to a character-validated math expression.
+    const result = Function('"use strict"; return (' +
+      expression + ')')();
+
+    if (typeof result !== 'number' || !Number.isFinite(result)) {
+      throw new Error('Invalid result');
+    }
+    return result;
+  }
+
+  function applyFunction(fn) {
+    const text = display.value.trim();
+
+    if (fn === 'clear') {
+      display.value = '0';
+      freshResult = false;
+      return;
+    }
+
+    if (fn === 'back') {
+      display.value = text.slice(0, -1) || '0';
+      freshResult = false;
+      return;
+    }
+
+    if (fn === 'equals') {
+      try {
+        display.value = String(calculate(text));
+      } catch {
+        display.value = 'Error';
+      }
+      freshResult = true;
+      return;
+    }
+
+    if (fn === 'pi') {
+      display.value = String(Math.PI);
+      freshResult = true;
+      return;
+    }
+
+    // Evaluate pending arithmetic before scientific functions.
+    let n;
+    try {
+      n = calculate(text);
+    } catch {
+      display.value = 'Error';
+      freshResult = true;
+      return;
+    }
+
+    let result;
+    switch (fn) {
+      case 'sin': result = Math.sin(n * Math.PI / 180); break;
+      case 'cos': result = Math.cos(n * Math.PI / 180); break;
+      case 'tan': result = Math.tan(n * Math.PI / 180); break;
+      case 'sqrt': result = Math.sqrt(n); break;
+      case 'square': result = n * n; break;
+      case 'log': result = Math.log10(n); break;
+      case 'ln': result = Math.log(n); break;
+      default: return;
+    }
+
+    display.value = Number.isFinite(result) ? String(result) : 'Error';
+    freshResult = true;
+  }
+
+  document.querySelectorAll('[data-fn]').forEach(button => {
+    button.addEventListener('click', () => {
+      applyFunction(button.dataset.fn);
+    });
+  });
+
+  display.addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      applyFunction('equals');
+    } else if (event.key === 'Escape') {
+      applyFunction('clear');
+    }
+  });
+
+  // Embed tester: inline textbox, no prompt and no new tab.
+  $('loadEmbed').addEventListener('click', () => {
+    const status = $('embedStatus');
+    let url;
+
+    try {
+      url = new URL($('embedUrl').value.trim());
+    } catch {
+      status.textContent = 'Enter a valid HTTPS URL.';
+      return;
+    }
+
+    if (url.protocol !== 'https:') {
+      status.textContent = 'Only HTTPS addresses are accepted.';
+      return;
+    }
+
+    const frame = $('gameFrame');
+    frame.classList.remove('hidden');
+    frame.src = url.href;
+    status.textContent =
+      'Loading requested page. If it stays blank or spins, ' +
+      'the website may prohibit embedding or a resource may not load.';
+  });
+
+  $('closeEmbed').addEventListener('click', () => {
+    $('gameFrame').src = 'about:blank';
+    $('gameFrame').classList.add('hidden');
+    $('embedStatus').textContent = 'Embed closed.';
+  });
+})();
+</script>
 </body>
 </html>
