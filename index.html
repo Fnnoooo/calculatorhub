@@ -1,624 +1,439 @@
-<!DOCTYPE html>
+(() => {
+document.open();
+document.write(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fno's Calculator Hub</title>
-
+<title></title>
 <style>
-/* LOCKED UI — only change this section if you explicitly request a redesign */
-:root {
-  --blue: #4f8cff;
-  --bg: #080b12;
-  --panel: #111827;
-  --muted: #94a3b8;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  min-height: 100vh;
-  padding: 18px;
-  color: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(ellipse at top, #172746, #080b12 65%);
-}
-button, input { font: inherit; }
-button {
-  border: 0;
-  cursor: pointer;
-  transition: transform .15s, opacity .15s;
-}
-button:active { transform: scale(.98); }
-.hidden { display: none !important; }
-.wrap { width: min(100%, 520px); margin: auto; }
-.card {
-  padding: 22px;
-  border-radius: 24px;
-  border: 1px solid #263247;
-  background: rgba(17,24,39,.92);
-  box-shadow: 0 20px 70px #0006;
-  backdrop-filter: blur(16px);
-}
-.center { text-align: center; }
-.logo {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 14px;
-  border-radius: 20px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg,#75b2ff,#3266f5);
-  font-size: 23px;
-  font-weight: 900;
-}
-h1 { font-size: 25px; margin: 8px 0; }
-h2 { font-size: 20px; margin: 0 0 14px; }
-p { color: var(--muted); line-height: 1.5; }
-button, input { outline-offset: 3px; }
-input {
-  width: 100%;
-  padding: 14px;
-  color: white;
-  background: #090e18;
-  border: 1px solid #334155;
-  border-radius: 13px;
-  outline: none;
-}
-input:focus { border-color: var(--blue); }
-.primary, .secondary, .danger {
-  padding: 13px 16px;
-  border-radius: 14px;
-  font-weight: 700;
-}
-.primary {
-  color: white;
-  background: linear-gradient(135deg,#6aa6ff,#3d6fff);
-}
-.secondary {
-  color: #e5edff;
-  background: #202b3e;
-  border: 1px solid #33445f;
-}
-.danger {
-  color: #ffdce2;
-  background: #421f2a;
-  border: 1px solid #743244;
-}
-.full { width: 100%; }
-.row { display: flex; gap: 9px; align-items: center; }
-.nav { display: flex; gap: 8px; margin-bottom: 16px; }
-.nav button { flex: 1; }
-.status {
-  color: #a9c7ff;
-  font-size: 13px;
-  min-height: 20px;
-  margin: 10px 0;
-}
-#loading {
-  min-height: 75vh;
-  display: grid;
-  place-items: center;
-}
-.spinner {
-  width: 38px;
-  height: 38px;
-  border: 3px solid #26364f;
-  border-top-color: #71aaff;
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
-  margin: 18px auto;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-#calcDisplay {
-  font-size: 28px;
-  text-align: right;
-  margin-bottom: 12px;
-}
-.keys {
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap: 8px;
-}
-.keys button {
-  height: 54px;
-  border-radius: 14px;
-  background: #202b3e;
-  color: white;
-  font-size: 18px;
-}
-.keys .op { background: #2b4167; }
-.keys .eq { background: #4f8cff; }
-.smallkeys {
-  display: grid;
-  grid-template-columns: repeat(5,1fr);
-  gap: 7px;
-  margin-bottom: 8px;
-}
-.smallkeys button {
-  padding: 10px 2px;
-  border-radius: 11px;
-  background: #182337;
-  color: #cfe0ff;
-  font-size: 13px;
-}
-.listitem {
-  padding: 14px;
-  background: #0b1220;
-  border: 1px solid #29364b;
-  border-radius: 14px;
-  margin: 9px 0;
-}
-.framebox { position: relative; margin-top: 14px; }
-#gameFrame {
-  display: block;
-  width: 100%;
-  height: min(65vh,620px);
-  border: 1px solid #334155;
-  border-radius: 16px;
-  background: #05070b;
-}
-#frameCountdown {
-  position: absolute;
-  inset: 1px;
-  z-index: 2;
-  background: #080d17;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px;
-}
-.countnum {
-  font-size: 54px;
-  font-weight: 900;
-  color: #8abaff;
-}
-footer {
-  text-align: center;
-  color: #64748b;
-  font-size: 12px;
-  margin: 20px 0;
-}
-@media(max-width:420px) {
-  body { padding: 12px; }
-  .card { padding: 17px; }
-  .keys button { height: 51px; }
-  .nav { flex-wrap: wrap; }
-}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,#090b12,#151b2b);color:#f4f6ff;font-family:Arial,sans-serif;padding:20px}
+.wrap{max-width:560px;margin:30px auto}
+.card{background:#171c2a;border:1px solid #30384d;border-radius:22px;padding:22px;margin-bottom:16px;box-shadow:0 12px 35px #0004}
+h1,h2,h3{margin-top:0}
+h1{font-size:27px}
+p{color:#aeb8cc;line-height:1.5}
+button,input,textarea{font:inherit;border-radius:12px;padding:13px}
+button{border:0;background:#eaf0ff;color:#101523;font-weight:bold;cursor:pointer}
+button:active{transform:scale(.98)}
+.primary{width:100%;margin-top:10px}
+.secondary{background:#272f42;color:#fff;border:1px solid #3b455d}
+input,textarea{width:100%;border:1px solid #424c64;background:#0e1320;color:white;outline:none}
+input:focus,textarea:focus{border-color:#9eb8ff}
+textarea{min-height:180px;resize:vertical;font-family:Consolas,Monaco,monospace;font-size:13px;line-height:1.5}
+.hidden{display:none!important}
+.row{display:flex;gap:8px}
+.row button{flex:1;min-width:0;padding:13px 5px}
+#display{font-size:25px;text-align:right;margin-bottom:12px}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.keys button{padding:15px 5px}
+.small{font-size:12px;color:#9aa7bf}
+#learningFrame,#codeFrame{width:100%;height:440px;border:0;border-radius:12px;background:#fff;margin-top:14px}
+.status{font-size:13px;overflow-wrap:anywhere}
+#startupCount,#learningCount,#codeCount{font-size:32px;font-weight:bold;margin:12px 0;color:#eaf0ff}
+.viewer-buttons{display:flex;gap:8px;margin-top:10px}
+.viewer-buttons button{flex:1}
+.fullscreen-frame{width:100%!important;height:100vh!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important}
+body.viewer-fullscreen{padding:0!important}
+@media(max-width:380px){body{padding:12px}.wrap{margin:14px auto}.card{padding:16px}.row{gap:5px}.row button{font-size:13px}}
 </style>
 </head>
-
 <body>
 <div class="wrap">
 
-  <!-- Initial startup countdown: runs once per page load -->
-  <section id="loading" class="center">
-    <div>
-      <div class="logo">FN</div>
-      <h1>Fno's Calculator Hub</h1>
-      <div class="spinner"></div>
-      <p>Starting up in <strong id="startupCount">3</strong>…</p>
-    </div>
-  </section>
+<section class="card" id="startup">
+<h1>Unknown's Learning Hub</h1>
+<p>Preparing your workspace...</p>
+<div id="startupCount">3</div>
+<p class="small">Please wait.</p>
+</section>
 
-  <!-- Passcode screen -->
-  <section id="login" class="card center hidden">
-    <div class="logo">FN</div>
-    <h1>Welcome back</h1>
-    <p>Enter the access code to continue.</p>
+<section class="card hidden" id="login">
+<h1>Unknown's Learning Hub</h1>
+<p>Enter your passcode to continue.</p>
+<form id="loginForm">
+<input id="passcode" type="password" placeholder="Passcode" autocomplete="off">
+<button class="primary" type="submit">Continue</button>
+</form>
+<p class="small" id="loginStatus"></p>
+</section>
 
-    <form id="loginForm">
-      <input
-        id="passcode"
-        type="password"
-        inputmode="numeric"
-        autocomplete="off"
-        placeholder="Passcode"
-        aria-label="Passcode"
-        required
-      >
-      <button class="primary full" style="margin-top:10px" type="submit">
-        Unlock Hub
-      </button>
-    </form>
+<main id="app" class="hidden">
+<section class="card">
+<h1>Unknown's Learning Hub</h1>
+<p>Your tools, all in one place.</p>
+<div class="row">
+<button id="showCalc" type="button">Calculator</button>
+<button class="secondary" id="showVersions" type="button">Versions</button>
+<button class="secondary" id="showLearning" type="button">Learning</button>
+</div>
+<div class="row" style="margin-top:8px">
+<button class="secondary" id="showCode" type="button">Embed Code</button>
+</div>
+</section>
 
-    <div id="loginStatus" class="status" role="status"></div>
-  </section>
+<section class="card" id="calc">
+<h2>Scientific Calculator</h2>
+<input id="display" value="0" inputmode="decimal" aria-label="Calculator display">
+<div class="keys">
+<button data-fn="clear" type="button">AC</button>
+<button data-val="(" type="button">(</button>
+<button data-val=")" type="button">)</button>
+<button data-val="/" type="button">÷</button>
+<button data-val="7" type="button">7</button>
+<button data-val="8" type="button">8</button>
+<button data-val="9" type="button">9</button>
+<button data-val="*" type="button">×</button>
+<button data-val="4" type="button">4</button>
+<button data-val="5" type="button">5</button>
+<button data-val="6" type="button">6</button>
+<button data-val="-" type="button">−</button>
+<button data-val="1" type="button">1</button>
+<button data-val="2" type="button">2</button>
+<button data-val="3" type="button">3</button>
+<button data-val="+" type="button">+</button>
+<button data-val="0" type="button">0</button>
+<button data-val="." type="button">.</button>
+<button data-fn="back" type="button">⌫</button>
+<button data-fn="equals" type="button">=</button>
+<button data-fn="sin" type="button">sin</button>
+<button data-fn="cos" type="button">cos</button>
+<button data-fn="tan" type="button">tan</button>
+<button data-fn="sqrt" type="button">√</button>
+<button data-fn="square" type="button">x²</button>
+<button data-fn="pi" type="button">π</button>
+<button data-fn="log" type="button">log</button>
+<button data-fn="ln" type="button">ln</button>
+</div>
+<p class="small">Trig functions use degrees.</p>
+</section>
 
-  <!-- Main hub -->
-  <main id="app" class="hidden">
-    <header class="center" style="margin:8px 0 18px">
-      <div class="logo">FN</div>
-      <h1>Fno's Calculator Hub</h1>
-      <p>Calculator · Versions · Game tester</p>
-    </header>
+<section class="card hidden" id="versions">
+<h2>Versions</h2>
+<p>Fno's Learning Hub</p>
+<p>Current version: 1.02</p>
+<button class="primary secondary" id="backHome" type="button">Back</button>
+</section>
 
-    <nav class="nav">
-      <button class="secondary" data-page="home">Calculator</button>
-      <button class="secondary" data-page="versions">Versions</button>
-      <button class="secondary" data-page="games">Game tester</button>
-    </nav>
+<section class="card hidden" id="learningPanel">
+<h2>Learning</h2>
+<p>Enter an HTTPS URL for a website that permits iframe embedding. Some websites block embeds, and school filtering may block requests.</p>
+<label for="learningUrl">Website URL</label>
+<input id="learningUrl" type="url" placeholder="https://example.com" autocomplete="url" spellcheck="false">
+<button class="primary" id="loadLearning" type="button">Load Learning</button>
+<div id="learningCount" class="hidden" aria-live="polite">3</div>
+<p id="learningStatus" class="status" role="status">No website loaded.</p>
+<iframe id="learningFrame" class="hidden" src="about:blank" title="Learning viewer" referrerpolicy="no-referrer" allow="fullscreen; gamepad; autoplay"></iframe>
+<div class="viewer-buttons">
+<button class="secondary" id="fullLearning" type="button">Full Screen</button>
+<button class="secondary" id="closeLearning" type="button">Close Learning</button>
+</div>
+<button class="primary secondary" type="button" data-back>Back</button>
+</section>
 
-    <!-- Calculator -->
-    <section id="homePage" class="card">
-      <h2>Scientific calculator</h2>
-
-      <input id="calcDisplay" value="0" aria-label="Calculator display">
-
-      <div class="smallkeys">
-        <button data-fn="sin(">sin</button>
-        <button data-fn="cos(">cos</button>
-        <button data-fn="tan(">tan</button>
-        <button data-fn="sqrt(">√</button>
-        <button data-fn="log(">log</button>
-        <button data-fn="(">(</button>
-        <button data-fn=")">)</button>
-        <button data-fn="pi">π</button>
-        <button data-fn="^">xʸ</button>
-        <button data-fn="abs(">abs</button>
-      </div>
-
-      <div class="keys" id="keys">
-        <button data-action="clear">AC</button>
-        <button data-action="delete">⌫</button>
-        <button data-value="%">%</button>
-        <button class="op" data-value="/">÷</button>
-
-        <button data-value="7">7</button>
-        <button data-value="8">8</button>
-        <button data-value="9">9</button>
-        <button class="op" data-value="*">×</button>
-
-        <button data-value="4">4</button>
-        <button data-value="5">5</button>
-        <button data-value="6">6</button>
-        <button class="op" data-value="-">−</button>
-
-        <button data-value="1">1</button>
-        <button data-value="2">2</button>
-        <button data-value="3">3</button>
-        <button class="op" data-value="+">+</button>
-
-        <button data-value="0">0</button>
-        <button data-value=".">.</button>
-        <button data-action="sign">±</button>
-        <button class="eq" data-action="equals">=</button>
-      </div>
-
-      <p>Trig functions use radians. You can also type an expression.</p>
-      <div id="calcStatus" class="status" role="status"></div>
-    </section>
-
-    <!-- Versions -->
-    <section id="versionsPage" class="card hidden">
-      <div class="row" style="justify-content:space-between">
-        <h2>Versions</h2>
-        <button class="secondary" data-page="home">← Back</button>
-      </div>
-
-      <div class="listitem">
-        <strong>Version 1.02</strong>
-        <p>Dark calculator hub, scientific functions, and embedded game tester.</p>
-        <span>Current version</span>
-      </div>
-
-      <p>Add future version notes here when you publish an update.</p>
-    </section>
-
-    <!-- Game tester -->
-    <section id="gamesPage" class="card hidden">
-      <div class="row" style="justify-content:space-between;align-items:flex-start">
-        <div>
-          <h2>Game / website tester</h2>
-          <p>Enter a URL to try loading it inside the frame.</p>
-        </div>
-        <button class="secondary" data-page="home">← Back</button>
-      </div>
-
-      <form id="embedForm">
-        <input
-          id="embedUrl"
-          type="url"
-          placeholder="https://example.com"
-          autocomplete="url"
-          required
-        >
-        <button class="primary full" style="margin-top:10px" type="submit">
-          Load in frame
-        </button>
-      </form>
-
-      <div id="embedStatus" class="status" role="status">
-        The frame is ready.
-      </div>
-
-      <div class="framebox">
-        <div id="frameCountdown" class="hidden">
-          <div>
-            <div>Preparing the embedded page</div>
-            <div id="embedCount" class="countnum">3</div>
-            <div class="status">Loading will begin when the countdown finishes.</div>
-          </div>
-        </div>
-
-        <!-- Keep allowfullscreen removed to avoid the console warning -->
-        <iframe
-          id="gameFrame"
-          title="Embedded game tester"
-          src="about:blank"
-          allow="fullscreen; gamepad; autoplay"
-        ></iframe>
-      </div>
-
-      <button
-        id="closeEmbed"
-        type="button"
-        class="danger full"
-        style="margin-top:10px"
-      >
-        ✕ Close Game
-      </button>
-
-      <p>
-        Some websites block embedding or require their own game files.
-        This tester loads the entered URL; it does not download and reconstruct
-        the entire game from another website.
-      </p>
-    </section>
-
-    <footer>Fno Development</footer>
-  </main>
+<section class="card hidden" id="codePanel">
+<h2>Embed Code</h2>
+<p>Paste HTML code, including any CSS or JavaScript, below. You can also paste an iframe embed snippet. Then load it in the viewer.</p>
+<label for="embedCode">HTML / Embed code</label>
+<textarea id="embedCode" spellcheck="false" placeholder="Paste your HTML or embed code here..."></textarea>
+<button class="primary" id="loadCode" type="button">Load Code</button>
+<div id="codeCount" class="hidden" aria-live="polite">3</div>
+<p id="codeStatus" class="status" role="status">No code loaded.</p>
+<iframe id="codeFrame" class="hidden" src="about:blank" title="Embedded code viewer" allow="fullscreen; gamepad; autoplay; clipboard-read; clipboard-write" referrerpolicy="no-referrer"></iframe>
+<div class="viewer-buttons">
+<button class="secondary" id="fullCode" type="button">Full Screen</button>
+<button class="secondary" id="closeCode" type="button">Close Viewer</button>
+</div>
+<button class="primary secondary" type="button" data-back>Back</button>
+<p class="small">Only paste code you trust. Code runs inside the viewer and may still need internet access for external resources.</p>
+</section>
+</main>
 </div>
 
 <script>
-(() => {
-  const $ = id => document.getElementById(id);
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
 
-  // STARTUP: the 3-second countdown runs only when the page first loads.
-  let startup = 3;
+let startupTimer = null;
+let learningTimer = null;
+let codeTimer = null;
+let learningRequestNumber = 0;
+let codeRequestNumber = 0;
 
-  const startupTimer = setInterval(() => {
-    startup--;
-    $("startupCount").textContent = startup;
+function startStartupCountdown(){
+  if(startupTimer !== null) clearInterval(startupTimer);
 
-    if (startup <= 0) {
+  let count = 3;
+  $("startupCount").textContent = String(count);
+  $("startup").classList.remove("hidden");
+  $("login").classList.add("hidden");
+  $("app").classList.add("hidden");
+
+  startupTimer = setInterval(() => {
+    count -= 1;
+    $("startupCount").textContent = String(Math.max(count, 0));
+
+    if(count <= 0){
       clearInterval(startupTimer);
-      $("loading").classList.add("hidden");
+      startupTimer = null;
+      $("startup").classList.add("hidden");
       $("login").classList.remove("hidden");
+      $("passcode").value = "";
+      $("loginStatus").textContent = "";
       $("passcode").focus();
     }
   }, 1000);
+}
 
-  // PASSCODE: incorrect attempts are allowed; no lockout.
-  $("loginForm").addEventListener("submit", event => {
-    event.preventDefault();
-
-    if ($("passcode").value === "0001") {
-      $("loginStatus").textContent = "";
-      $("login").classList.add("hidden");
-      $("app").classList.remove("hidden");
-      showPage("home");
-    } else {
-      $("loginStatus").textContent = "Incorrect code. Try again.";
-      $("passcode").value = "";
-      $("passcode").focus();
-    }
-  });
-
-  // NAVIGATION
-  function showPage(page) {
-    ["home", "versions", "games"].forEach(name => {
-      $(name + "Page").classList.toggle("hidden", name !== page);
-    });
+function unlock(){
+  if($("passcode").value === "0001"){
+    $("loginStatus").textContent = "";
+    $("login").classList.add("hidden");
+    $("startup").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    showPage("calc");
+    $("passcode").value = "";
+  }else{
+    $("loginStatus").textContent = "Incorrect passcode.";
+    $("passcode").value = "";
+    $("passcode").focus();
   }
+}
 
-  document.querySelectorAll("[data-page]").forEach(button => {
-    button.addEventListener("click", () => showPage(button.dataset.page));
+$("loginForm").addEventListener("submit", e => {
+  e.preventDefault();
+  unlock();
+});
+
+function showPage(page){
+  $("calc").classList.toggle("hidden", page !== "calc");
+  $("versions").classList.toggle("hidden", page !== "versions");
+  $("learningPanel").classList.toggle("hidden", page !== "learning");
+  $("codePanel").classList.toggle("hidden", page !== "code");
+
+  if(page === "calc") $("calc").scrollIntoView({behavior:"smooth"});
+  else window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("showCalc").onclick = () => showPage("calc");
+$("showVersions").onclick = () => showPage("versions");
+$("showLearning").onclick = () => showPage("learning");
+$("showCode").onclick = () => showPage("code");
+$("backHome").onclick = () => showPage("calc");
+
+document.querySelectorAll("[data-back]").forEach(button => {
+  button.addEventListener("click", () => showPage("calc"));
+});
+
+const display = $("display");
+
+document.querySelectorAll("[data-val]").forEach(button => {
+  button.addEventListener("click", () => {
+    if(display.value === "0" || display.value === "Invalid" || display.value === "Error"){
+      display.value = "";
+    }
+    display.value += button.dataset.val;
   });
+});
 
-  // SCIENTIFIC CALCULATOR
-  const display = $("calcDisplay");
-  let justEvaluated = false;
+document.querySelectorAll("[data-fn]").forEach(button => {
+  button.addEventListener("click", () => {
+    const fn = button.dataset.fn;
+    const raw = display.value.trim();
 
-  function insert(value) {
-    let current = display.value;
+    if(fn === "clear"){ display.value = "0"; return; }
+    if(fn === "back"){ display.value = display.value.slice(0,-1) || "0"; return; }
+    if(fn === "pi"){ display.value = String(Math.PI); return; }
 
-    if (current === "Error") current = "0";
-
-    if (justEvaluated && /^[0-9.]$/.test(value)) {
-      current = "0";
+    if(fn === "equals"){
+      if(!/^[0-9+*/().\\s-]+$/.test(raw)){
+        display.value = "Invalid";
+        return;
+      }
+      try{
+        const result = Function('"use strict";return ('+raw+')')();
+        display.value = Number.isFinite(result) ? String(result) : "Error";
+      }catch(e){ display.value = "Error"; }
+      return;
     }
 
-    justEvaluated = false;
-
-    // Replace the initial zero when entering the first digit.
-    if (/^[0-9]$/.test(value) && current === "0") {
-      display.value = value;
-    } else if (value === "." && (current === "" || current === "0")) {
-      display.value = "0.";
-    } else if (value === "pi" && current === "0") {
-      display.value = "pi";
-    } else {
-      display.value = current + value;
-    }
-  }
-
-  function calculate() {
-    let expression = display.value.trim();
-    if (!expression) return;
-
-    try {
-      expression = expression
-        .replace(/π/g, "pi")
-        .replace(/\^/g, "**");
-
-      if (!/^[0-9+\-*/().,%\sA-Za-z_]*$/.test(expression)) {
-        throw new Error("Invalid characters");
-      }
-
-      const checked = expression.replace(
-        /\b(sin|cos|tan|sqrt|log|abs|pi)\b/g, ""
-      );
-
-      if (/[A-Za-z_]/.test(checked)) {
-        throw new Error("Unknown function");
-      }
-
-      const evaluate = new Function(
-        "sin", "cos", "tan", "sqrt", "log", "abs", "pi",
-        '"use strict"; return (' + expression + ');'
-      );
-
-      const result = evaluate(
-        Math.sin,
-        Math.cos,
-        Math.tan,
-        Math.sqrt,
-        x => Math.log10(x),
-        Math.abs,
-        Math.PI
-      );
-
-      if (typeof result !== "number" || !Number.isFinite(result)) {
-        throw new Error("Invalid result");
-      }
-
-      display.value = String(Number(result.toPrecision(12)));
-      $("calcStatus").textContent = "";
-      justEvaluated = true;
-    } catch {
+    const n = Number(raw);
+    if(raw === "" || !Number.isFinite(n)){
       display.value = "Error";
-      $("calcStatus").textContent = "That expression could not be calculated.";
-      justEvaluated = true;
-    }
-  }
-
-  $("keys").addEventListener("click", event => {
-    const button = event.target.closest("button");
-    if (!button) return;
-
-    if (button.dataset.value !== undefined) {
-      insert(button.dataset.value);
-    } else if (button.dataset.action === "clear") {
-      display.value = "0";
-      $("calcStatus").textContent = "";
-      justEvaluated = false;
-    } else if (button.dataset.action === "delete") {
-      display.value = display.value.length > 1
-        ? display.value.slice(0, -1)
-        : "0";
-      justEvaluated = false;
-    } else if (button.dataset.action === "sign") {
-      display.value = display.value.startsWith("-")
-        ? display.value.slice(1)
-        : (display.value === "0" ? "0" : "-" + display.value);
-      justEvaluated = false;
-    } else if (button.dataset.action === "equals") {
-      calculate();
-    }
-  });
-
-  document.querySelectorAll("[data-fn]").forEach(button => {
-    button.addEventListener("click", () => insert(button.dataset.fn));
-  });
-
-  display.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      calculate();
-    }
-  });
-
-  display.addEventListener("input", () => {
-    justEvaluated = false;
-  });
-
-  // GAME TESTER
-  // Start on about:blank, show a separate 3-second countdown,
-  // then navigate the iframe to the entered URL.
-  let embedTimer = null;
-  let loadNoticeTimer = null;
-  let requestNumber = 0;
-
-  function clearEmbedTimers() {
-    if (embedTimer) clearInterval(embedTimer);
-    if (loadNoticeTimer) clearTimeout(loadNoticeTimer);
-
-    embedTimer = null;
-    loadNoticeTimer = null;
-    $("frameCountdown").classList.add("hidden");
-  }
-
-  $("embedForm").addEventListener("submit", event => {
-    event.preventDefault();
-    clearEmbedTimers();
-
-    let url;
-
-    try {
-      url = new URL($("embedUrl").value.trim());
-    } catch {
-      $("embedStatus").textContent = "Enter a valid website URL.";
       return;
     }
 
-    if (!["http:", "https:"].includes(url.protocol)) {
-      $("embedStatus").textContent =
-        "Use a URL starting with http:// or https://.";
-      return;
+    if(fn === "sin") display.value = String(Math.sin(n*Math.PI/180));
+    if(fn === "cos") display.value = String(Math.cos(n*Math.PI/180));
+    if(fn === "tan") display.value = String(Math.tan(n*Math.PI/180));
+    if(fn === "sqrt") display.value = n < 0 ? "Error" : String(Math.sqrt(n));
+    if(fn === "square") display.value = String(n*n);
+    if(fn === "log") display.value = n <= 0 ? "Error" : String(Math.log10(n));
+    if(fn === "ln") display.value = n <= 0 ? "Error" : String(Math.log(n));
+  });
+});
+
+function clearLearningTimer(){
+  learningRequestNumber++;
+  if(learningTimer !== null){
+    clearInterval(learningTimer);
+    learningTimer = null;
+  }
+  $("learningCount").classList.add("hidden");
+  $("loadLearning").disabled = false;
+}
+
+$("loadLearning").addEventListener("click", () => {
+  clearLearningTimer();
+  const request = learningRequestNumber;
+  const status = $("learningStatus");
+  let url;
+
+  try{
+    url = new URL($("learningUrl").value.trim());
+  }catch(e){
+    status.textContent = "Enter a valid HTTPS URL.";
+    return;
+  }
+
+  if(url.protocol !== "https:"){
+    status.textContent = "Only HTTPS URLs are accepted for now.";
+    return;
+  }
+
+  $("learningFrame").classList.add("hidden");
+  $("learningFrame").src = "about:blank";
+  $("learningCount").classList.remove("hidden");
+  $("learningCount").textContent = "3";
+  $("loadLearning").disabled = true;
+  status.textContent = "Opening website in 3 seconds...";
+
+  let count = 3;
+  learningTimer = setInterval(() => {
+    if(request !== learningRequestNumber) return;
+    count--;
+    $("learningCount").textContent = String(Math.max(count,0));
+
+    if(count <= 0){
+      clearInterval(learningTimer);
+      learningTimer = null;
+      $("learningCount").classList.add("hidden");
+      $("loadLearning").disabled = false;
+      $("learningFrame").classList.remove("hidden");
+      $("learningFrame").src = url.href;
+      status.textContent = "Requested the page. Some websites block embedding.";
     }
+  },1000);
+});
 
-    const thisRequest = ++requestNumber;
-    const targetUrl = url.href;
+function clearCodeTimer(){
+  codeRequestNumber++;
+  if(codeTimer !== null){
+    clearInterval(codeTimer);
+    codeTimer = null;
+  }
+  $("codeCount").classList.add("hidden");
+  $("loadCode").disabled = false;
+}
 
-    // Blank frame first.
-    $("gameFrame").src = "about:blank";
+$("loadCode").addEventListener("click", () => {
+  clearCodeTimer();
 
-    // Show countdown overlay.
-    $("frameCountdown").classList.remove("hidden");
+  const request = codeRequestNumber;
+  const code = $("embedCode").value.trim();
+  const status = $("codeStatus");
 
-    let count = 3;
-    $("embedCount").textContent = count;
-    $("embedStatus").textContent = "Preparing the frame…";
+  if(!code){
+    status.textContent = "Paste some HTML or embed code first.";
+    return;
+  }
 
-    embedTimer = setInterval(() => {
-      count--;
-      $("embedCount").textContent = Math.max(count, 0);
+  $("codeFrame").classList.add("hidden");
+  $("codeFrame").src = "about:blank";
+  $("codeCount").classList.remove("hidden");
+  $("codeCount").textContent = "3";
+  $("loadCode").disabled = true;
+  status.textContent = "Loading code in 3 seconds...";
 
-      if (count <= 0) {
-        clearInterval(embedTimer);
-        embedTimer = null;
-        $("frameCountdown").classList.add("hidden");
+  let count = 3;
+  codeTimer = setInterval(() => {
+    if(request !== codeRequestNumber) return;
+    count--;
+    $("codeCount").textContent = String(Math.max(count,0));
 
-        if (thisRequest !== requestNumber) return;
+    if(count <= 0){
+      clearInterval(codeTimer);
+      codeTimer = null;
+      $("codeCount").classList.add("hidden");
+      $("loadCode").disabled = false;
 
-        $("embedStatus").textContent = "Loading the requested page…";
+      $("codeFrame").classList.remove("hidden");
 
-        // Load the requested website after the countdown.
-        $("gameFrame").src = targetUrl;
+      // Render the pasted HTML inside the separate iframe.
+      // JavaScript in the pasted document can run normally.
+      $("codeFrame").srcdoc = code;
+      status.textContent = "Code loaded into the viewer.";
+    }
+  },1000);
+});
 
-        // A cross-origin iframe cannot reliably report whether the
-        // game's internal engine has completed startup.
-        loadNoticeTimer = setTimeout(() => {
-          if (thisRequest === requestNumber) {
-            $("embedStatus").textContent =
-              "Still blank? The website may block embedding or need resources unavailable inside a frame.";
-          }
-        }, 12000);
-      }
-    }, 1000);
-  });
+function closeLearning(){
+  clearLearningTimer();
+  $("learningFrame").src = "about:blank";
+  $("learningFrame").classList.add("hidden");
+  $("learningStatus").textContent = "Learning viewer closed.";
+}
 
-  // CLOSE GAME: stop countdowns and reset the iframe to blank.
-  $("closeEmbed").addEventListener("click", () => {
-    requestNumber++;
-    clearEmbedTimers();
-    $("gameFrame").src = "about:blank";
-    $("embedStatus").textContent =
-      "Game closed. Enter another URL to try again.";
-  });
+$("closeLearning").addEventListener("click", closeLearning);
+
+$("closeCode").addEventListener("click", () => {
+  clearCodeTimer();
+  $("codeFrame").srcdoc = "";
+  $("codeFrame").src = "about:blank";
+  $("codeFrame").classList.add("hidden");
+  $("codeStatus").textContent = "Code viewer closed.";
+});
+
+function requestViewerFullscreen(frame){
+  if(!frame || frame.classList.contains("hidden")){
+    return;
+  }
+
+  if(frame.requestFullscreen){
+    frame.requestFullscreen().catch(() => {
+      // Fallback below if browser fullscreen is unavailable.
+      frame.classList.add("fullscreen-frame");
+      document.body.classList.add("viewer-fullscreen");
+    });
+  }else{
+    frame.classList.add("fullscreen-frame");
+    document.body.classList.add("viewer-fullscreen");
+  }
+}
+
+$("fullLearning").addEventListener("click", () => {
+  requestViewerFullscreen($("learningFrame"));
+});
+
+$("fullCode").addEventListener("click", () => {
+  requestViewerFullscreen($("codeFrame"));
+});
+
+document.addEventListener("fullscreenchange", () => {
+  if(!document.fullscreenElement){
+    document.querySelectorAll(".fullscreen-frame").forEach(frame => {
+      frame.classList.remove("fullscreen-frame");
+    });
+    document.body.classList.remove("viewer-fullscreen");
+  }
+});
+
+startStartupCountdown();
 })();
-</script>
+<\/script>
 </body>
-</html>
+</html>`);
+document.close();
+})();
