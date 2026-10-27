@@ -1,12 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title></title>
+<title>Fno's Calculator Hub</title>
 
 <style>
+/* LOCKED UI — only change this section if you explicitly request a redesign */
 :root {
   --blue: #4f8cff;
   --bg: #080b12;
@@ -37,6 +37,7 @@ button:active { transform: scale(.98); }
   border: 1px solid #263247;
   background: rgba(17,24,39,.92);
   box-shadow: 0 20px 70px #0006;
+  backdrop-filter: blur(16px);
 }
 .center { text-align: center; }
 .logo {
@@ -53,6 +54,7 @@ button:active { transform: scale(.98); }
 h1 { font-size: 25px; margin: 8px 0; }
 h2 { font-size: 20px; margin: 0 0 14px; }
 p { color: var(--muted); line-height: 1.5; }
+button, input { outline-offset: 3px; }
 input {
   width: 100%;
   padding: 14px;
@@ -86,7 +88,12 @@ input:focus { border-color: var(--blue); }
 .row { display: flex; gap: 9px; align-items: center; }
 .nav { display: flex; gap: 8px; margin-bottom: 16px; }
 .nav button { flex: 1; }
-.status { color: #a9c7ff; font-size: 13px; min-height: 20px; margin: 10px 0; }
+.status {
+  color: #a9c7ff;
+  font-size: 13px;
+  min-height: 20px;
+  margin: 10px 0;
+}
 #loading {
   min-height: 75vh;
   display: grid;
@@ -141,6 +148,7 @@ input:focus { border-color: var(--blue); }
   border-radius: 14px;
   margin: 9px 0;
 }
+.framebox { position: relative; margin-top: 14px; }
 #gameFrame {
   display: block;
   width: 100%;
@@ -149,7 +157,6 @@ input:focus { border-color: var(--blue); }
   border-radius: 16px;
   background: #05070b;
 }
-.framebox { position: relative; margin-top: 14px; }
 #frameCountdown {
   position: absolute;
   inset: 1px;
@@ -185,7 +192,7 @@ footer {
 <body>
 <div class="wrap">
 
-  <!-- Initial countdown: runs only when the page first opens -->
+  <!-- Initial startup countdown: runs once per page load -->
   <section id="loading" class="center">
     <div>
       <div class="logo">FN</div>
@@ -195,7 +202,7 @@ footer {
     </div>
   </section>
 
-  <!-- Passcode -->
+  <!-- Passcode screen -->
   <section id="login" class="card center hidden">
     <div class="logo">FN</div>
     <h1>Welcome back</h1>
@@ -208,6 +215,7 @@ footer {
         inputmode="numeric"
         autocomplete="off"
         placeholder="Passcode"
+        aria-label="Passcode"
         required
       >
       <button class="primary full" style="margin-top:10px" type="submit">
@@ -294,6 +302,7 @@ footer {
         <p>Dark calculator hub, scientific functions, and embedded game tester.</p>
         <span>Current version</span>
       </div>
+
       <p>Add future version notes here when you publish an update.</p>
     </section>
 
@@ -308,7 +317,13 @@ footer {
       </div>
 
       <form id="embedForm">
-        <input id="embedUrl" type="url" placeholder="https://example.com" required>
+        <input
+          id="embedUrl"
+          type="url"
+          placeholder="https://example.com"
+          autocomplete="url"
+          required
+        >
         <button class="primary full" style="margin-top:10px" type="submit">
           Load in frame
         </button>
@@ -327,23 +342,28 @@ footer {
           </div>
         </div>
 
+        <!-- Keep allowfullscreen removed to avoid the console warning -->
         <iframe
           id="gameFrame"
           title="Embedded game tester"
           src="about:blank"
           allow="fullscreen; gamepad; autoplay"
-          allowfullscreen
         ></iframe>
       </div>
 
-      <button id="closeEmbed" type="button" class="danger full" style="margin-top:10px">
+      <button
+        id="closeEmbed"
+        type="button"
+        class="danger full"
+        style="margin-top:10px"
+      >
         ✕ Close Game
       </button>
 
       <p>
-        Some websites block embedding or need additional game files.
+        Some websites block embedding or require their own game files.
         This tester loads the entered URL; it does not download and reconstruct
-        the website's entire game engine.
+        the entire game from another website.
       </p>
     </section>
 
@@ -355,7 +375,7 @@ footer {
 (() => {
   const $ = id => document.getElementById(id);
 
-  // 1. Initial countdown runs once when this page loads.
+  // STARTUP: the 3-second countdown runs only when the page first loads.
   let startup = 3;
 
   const startupTimer = setInterval(() => {
@@ -370,7 +390,7 @@ footer {
     }
   }, 1000);
 
-  // 2. Passcode: wrong entries don't lock the user out.
+  // PASSCODE: incorrect attempts are allowed; no lockout.
   $("loginForm").addEventListener("submit", event => {
     event.preventDefault();
 
@@ -386,7 +406,7 @@ footer {
     }
   });
 
-  // Page navigation
+  // NAVIGATION
   function showPage(page) {
     ["home", "versions", "games"].forEach(name => {
       $(name + "Page").classList.toggle("hidden", name !== page);
@@ -397,7 +417,7 @@ footer {
     button.addEventListener("click", () => showPage(button.dataset.page));
   });
 
-  // 3. Calculator
+  // SCIENTIFIC CALCULATOR
   const display = $("calcDisplay");
   let justEvaluated = false;
 
@@ -406,11 +426,13 @@ footer {
 
     if (current === "Error") current = "0";
 
-    // After an answer, a new number starts a fresh calculation.
-    if (justEvaluated && /^[0-9.]$/.test(value)) current = "0";
+    if (justEvaluated && /^[0-9.]$/.test(value)) {
+      current = "0";
+    }
+
     justEvaluated = false;
 
-    // Replace a lone leading zero when the user types a digit.
+    // Replace the initial zero when entering the first digit.
     if (/^[0-9]$/.test(value) && current === "0") {
       display.value = value;
     } else if (value === "." && (current === "" || current === "0")) {
@@ -449,8 +471,13 @@ footer {
       );
 
       const result = evaluate(
-        Math.sin, Math.cos, Math.tan, Math.sqrt,
-        x => Math.log10(x), Math.abs, Math.PI
+        Math.sin,
+        Math.cos,
+        Math.tan,
+        Math.sqrt,
+        x => Math.log10(x),
+        Math.abs,
+        Math.PI
       );
 
       if (typeof result !== "number" || !Number.isFinite(result)) {
@@ -493,9 +520,7 @@ footer {
   });
 
   document.querySelectorAll("[data-fn]").forEach(button => {
-    button.addEventListener("click", () => {
-      insert(button.dataset.fn);
-    });
+    button.addEventListener("click", () => insert(button.dataset.fn));
   });
 
   display.addEventListener("keydown", event => {
@@ -509,7 +534,9 @@ footer {
     justEvaluated = false;
   });
 
-  // 4. Game tester countdown: blank frame first, URL loads after 3 seconds.
+  // GAME TESTER
+  // Start on about:blank, show a separate 3-second countdown,
+  // then navigate the iframe to the entered URL.
   let embedTimer = null;
   let loadNoticeTimer = null;
   let requestNumber = 0;
@@ -517,6 +544,7 @@ footer {
   function clearEmbedTimers() {
     if (embedTimer) clearInterval(embedTimer);
     if (loadNoticeTimer) clearTimeout(loadNoticeTimer);
+
     embedTimer = null;
     loadNoticeTimer = null;
     $("frameCountdown").classList.add("hidden");
@@ -527,6 +555,7 @@ footer {
     clearEmbedTimers();
 
     let url;
+
     try {
       url = new URL($("embedUrl").value.trim());
     } catch {
@@ -543,8 +572,10 @@ footer {
     const thisRequest = ++requestNumber;
     const targetUrl = url.href;
 
-    // Start with a genuinely blank iframe.
+    // Blank frame first.
     $("gameFrame").src = "about:blank";
+
+    // Show countdown overlay.
     $("frameCountdown").classList.remove("hidden");
 
     let count = 3;
@@ -564,21 +595,22 @@ footer {
 
         $("embedStatus").textContent = "Loading the requested page…";
 
-        // This loads the entered site in the iframe; it doesn't copy all
-        // of that site's source files or assets into about:blank.
+        // Load the requested website after the countdown.
         $("gameFrame").src = targetUrl;
 
+        // A cross-origin iframe cannot reliably report whether the
+        // game's internal engine has completed startup.
         loadNoticeTimer = setTimeout(() => {
           if (thisRequest === requestNumber) {
             $("embedStatus").textContent =
-              "Still blank? This website may block embedding or require resources unavailable in a frame.";
+              "Still blank? The website may block embedding or need resources unavailable inside a frame.";
           }
         }, 12000);
       }
     }, 1000);
   });
 
-  // 5. Close game and reset iframe to blank.
+  // CLOSE GAME: stop countdowns and reset the iframe to blank.
   $("closeEmbed").addEventListener("click", () => {
     requestNumber++;
     clearEmbedTimers();
