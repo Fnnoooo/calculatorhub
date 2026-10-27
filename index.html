@@ -4,426 +4,589 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fno's Calculator Hub</title>
+<title></title>
+
 <style>
 :root {
-  color-scheme: dark;
-  --bg: #09090f;
-  --panel: #151521;
-  --accent: #6c8cff;
-  --text: #f5f5ff;
-  --muted: #a2a2b8;
+  --blue: #4f8cff;
+  --bg: #080b12;
+  --panel: #111827;
+  --muted: #94a3b8;
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #202445, var(--bg) 60%);
-  color: var(--text);
-  font-family: system-ui, Arial, sans-serif;
+  padding: 18px;
+  color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(ellipse at top, #172746, #080b12 65%);
 }
 button, input { font: inherit; }
 button {
-  border: 1px solid #34344b;
-  border-radius: 13px;
-  padding: 12px 15px;
-  background: #222235;
-  color: white;
+  border: 0;
   cursor: pointer;
-  transition: transform .15s, background .15s;
+  transition: transform .15s, opacity .15s;
 }
-button:hover { background: #33334c; }
-button:active { transform: scale(.97); }
-input {
-  width: 100%;
-  padding: 13px;
-  border-radius: 12px;
-  border: 1px solid #393950;
-  background: #0d0d17;
-  color: white;
-}
+button:active { transform: scale(.98); }
 .hidden { display: none !important; }
-.center {
-  min-height: 100vh;
+.wrap { width: min(100%, 520px); margin: auto; }
+.card {
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid #263247;
+  background: rgba(17,24,39,.92);
+  box-shadow: 0 20px 70px #0006;
+}
+.center { text-align: center; }
+.logo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: 20px;
   display: grid;
   place-items: center;
-  padding: 22px;
+  background: linear-gradient(135deg,#75b2ff,#3266f5);
+  font-size: 23px;
+  font-weight: 900;
 }
-.card {
-  width: min(100%, 440px);
-  background: rgba(21,21,33,.96);
-  border: 1px solid #303047;
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 20px 70px #0008;
-}
-h1 { font-size: 26px; margin: 0 0 8px; }
+h1 { font-size: 25px; margin: 8px 0; }
+h2 { font-size: 20px; margin: 0 0 14px; }
 p { color: var(--muted); line-height: 1.5; }
-.primary {
+input {
   width: 100%;
-  background: var(--accent);
-  color: #080a15;
-  border: 0;
-  font-weight: 750;
-  margin-top: 12px;
+  padding: 14px;
+  color: white;
+  background: #090e18;
+  border: 1px solid #334155;
+  border-radius: 13px;
+  outline: none;
 }
-#app { max-width: 900px; margin: auto; padding: 22px; }
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+input:focus { border-color: var(--blue); }
+.primary, .secondary, .danger {
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-weight: 700;
 }
-.panel {
-  background: var(--panel);
-  border: 1px solid #303047;
-  border-radius: 20px;
-  padding: 20px;
-  margin: 16px 0;
+.primary {
+  color: white;
+  background: linear-gradient(135deg,#6aa6ff,#3d6fff);
 }
-.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.secondary {
+  color: #e5edff;
+  background: #202b3e;
+  border: 1px solid #33445f;
+}
+.danger {
+  color: #ffdce2;
+  background: #421f2a;
+  border: 1px solid #743244;
+}
+.full { width: 100%; }
+.row { display: flex; gap: 9px; align-items: center; }
+.nav { display: flex; gap: 8px; margin-bottom: 16px; }
+.nav button { flex: 1; }
+.status { color: #a9c7ff; font-size: 13px; min-height: 20px; margin: 10px 0; }
+#loading {
+  min-height: 75vh;
+  display: grid;
+  place-items: center;
+}
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid #26364f;
+  border-top-color: #71aaff;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 18px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 #calcDisplay {
-  font-size: 30px;
+  font-size: 28px;
   text-align: right;
-  margin: 10px 0 14px;
-  height: 62px;
+  margin-bottom: 12px;
 }
 .keys {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4,1fr);
   gap: 8px;
 }
-.keys button { min-height: 53px; font-size: 18px; }
-.keys .operator { background: #30365a; }
-.keys .equals { background: var(--accent); color: #080a15; }
-.small { font-size: 13px; color: var(--muted); }
-#gameFrame {
-  width: 100%;
-  height: 65vh;
-  min-height: 380px;
-  border: 1px solid #34344b;
-  border-radius: 15px;
-  background: #08080e;
-  margin-top: 14px;
+.keys button {
+  height: 54px;
+  border-radius: 14px;
+  background: #202b3e;
+  color: white;
+  font-size: 18px;
 }
-a { color: #aebfff; }
+.keys .op { background: #2b4167; }
+.keys .eq { background: #4f8cff; }
+.smallkeys {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.smallkeys button {
+  padding: 10px 2px;
+  border-radius: 11px;
+  background: #182337;
+  color: #cfe0ff;
+  font-size: 13px;
+}
+.listitem {
+  padding: 14px;
+  background: #0b1220;
+  border: 1px solid #29364b;
+  border-radius: 14px;
+  margin: 9px 0;
+}
+#gameFrame {
+  display: block;
+  width: 100%;
+  height: min(65vh,620px);
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background: #05070b;
+}
+.framebox { position: relative; margin-top: 14px; }
+#frameCountdown {
+  position: absolute;
+  inset: 1px;
+  z-index: 2;
+  background: #080d17;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+.countnum {
+  font-size: 54px;
+  font-weight: 900;
+  color: #8abaff;
+}
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 12px;
+  margin: 20px 0;
+}
+@media(max-width:420px) {
+  body { padding: 12px; }
+  .card { padding: 17px; }
+  .keys button { height: 51px; }
+  .nav { flex-wrap: wrap; }
+}
 </style>
 </head>
+
 <body>
+<div class="wrap">
 
-<section class="center" id="loading">
-  <div class="card" style="text-align:center">
-    <h1>Fno's Calculator Hub</h1>
-    <p id="countdown">Starting in 3…</p>
-  </div>
-</section>
-
-<section class="center hidden" id="login">
-  <div class="card">
-    <h1>Fno's Calculator Hub</h1>
-    <p>Enter your passcode to continue.</p>
-    <form id="loginForm">
-      <input id="passcode" type="password" inputmode="numeric"
-        placeholder="Passcode" autocomplete="off" required>
-      <button class="primary" type="submit">Unlock Hub</button>
-    </form>
-    <p id="loginError" class="small"></p>
-  </div>
-</section>
-
-<main id="app" class="hidden">
-  <header>
+  <!-- Initial countdown: runs only when the page first opens -->
+  <section id="loading" class="center">
     <div>
+      <div class="logo">FN</div>
       <h1>Fno's Calculator Hub</h1>
-      <p style="margin:4px 0">Fno Development · Version 1.02</p>
+      <div class="spinner"></div>
+      <p>Starting up in <strong id="startupCount">3</strong>…</p>
     </div>
-    <nav class="nav">
-      <button onclick="showPage('home')">Home</button>
-      <button onclick="showPage('versions')">Versions</button>
-      <button onclick="showPage('games')">Game Tester</button>
-    </nav>
-  </header>
+  </section>
 
-  <section id="homePage">
-    <div class="panel">
-      <h2>Scientific Calculator</h2>
-      <input id="calcDisplay" value="0" inputmode="decimal"
-        aria-label="Calculator display">
-      <div class="keys" id="calculatorKeys">
+  <!-- Passcode -->
+  <section id="login" class="card center hidden">
+    <div class="logo">FN</div>
+    <h1>Welcome back</h1>
+    <p>Enter the access code to continue.</p>
+
+    <form id="loginForm">
+      <input
+        id="passcode"
+        type="password"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="Passcode"
+        required
+      >
+      <button class="primary full" style="margin-top:10px" type="submit">
+        Unlock Hub
+      </button>
+    </form>
+
+    <div id="loginStatus" class="status" role="status"></div>
+  </section>
+
+  <!-- Main hub -->
+  <main id="app" class="hidden">
+    <header class="center" style="margin:8px 0 18px">
+      <div class="logo">FN</div>
+      <h1>Fno's Calculator Hub</h1>
+      <p>Calculator · Versions · Game tester</p>
+    </header>
+
+    <nav class="nav">
+      <button class="secondary" data-page="home">Calculator</button>
+      <button class="secondary" data-page="versions">Versions</button>
+      <button class="secondary" data-page="games">Game tester</button>
+    </nav>
+
+    <!-- Calculator -->
+    <section id="homePage" class="card">
+      <h2>Scientific calculator</h2>
+
+      <input id="calcDisplay" value="0" aria-label="Calculator display">
+
+      <div class="smallkeys">
+        <button data-fn="sin(">sin</button>
+        <button data-fn="cos(">cos</button>
+        <button data-fn="tan(">tan</button>
+        <button data-fn="sqrt(">√</button>
+        <button data-fn="log(">log</button>
+        <button data-fn="(">(</button>
+        <button data-fn=")">)</button>
+        <button data-fn="pi">π</button>
+        <button data-fn="^">xʸ</button>
+        <button data-fn="abs(">abs</button>
+      </div>
+
+      <div class="keys" id="keys">
         <button data-action="clear">AC</button>
-        <button data-action="back">⌫</button>
-        <button data-value="(">(</button>
-        <button data-value=")" class="operator">)</button>
+        <button data-action="delete">⌫</button>
+        <button data-value="%">%</button>
+        <button class="op" data-value="/">÷</button>
 
         <button data-value="7">7</button>
         <button data-value="8">8</button>
         <button data-value="9">9</button>
-        <button data-value="/" class="operator">÷</button>
+        <button class="op" data-value="*">×</button>
 
         <button data-value="4">4</button>
         <button data-value="5">5</button>
         <button data-value="6">6</button>
-        <button data-value="*" class="operator">×</button>
+        <button class="op" data-value="-">−</button>
 
         <button data-value="1">1</button>
         <button data-value="2">2</button>
         <button data-value="3">3</button>
-        <button data-value="-" class="operator">−</button>
+        <button class="op" data-value="+">+</button>
 
         <button data-value="0">0</button>
         <button data-value=".">.</button>
-        <button data-action="equals" class="equals">=</button>
-        <button data-value="+" class="operator">+</button>
-
-        <button data-action="sqrt">√x</button>
-        <button data-action="square">x²</button>
-        <button data-action="sin">sin</button>
-        <button data-action="cos">cos</button>
-
-        <button data-action="tan">tan</button>
-        <button data-action="log">log</button>
-        <button data-action="ln">ln</button>
-        <button data-action="pi">π</button>
+        <button data-action="sign">±</button>
+        <button class="eq" data-action="equals">=</button>
       </div>
-      <p class="small">Trig functions use degrees. You can also type an expression.</p>
-    </div>
 
-    <div class="panel">
-      <h2>Quick Links</h2>
-      <p>Use the Game Tester to try a website that permits embedding.</p>
-      <button onclick="showPage('games')">Open Game Tester</button>
-    </div>
-  </section>
+      <p>Trig functions use radians. You can also type an expression.</p>
+      <div id="calcStatus" class="status" role="status"></div>
+    </section>
 
-  <section id="versionsPage" class="hidden">
-    <div class="panel">
-      <button onclick="showPage('home')">← Back</button>
-      <h2>Versions</h2>
-      <p><strong>Version 1.02</strong> — Current release</p>
-      <p class="small">Updates appear here when you edit this page.</p>
-    </div>
-  </section>
+    <!-- Versions -->
+    <section id="versionsPage" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <h2>Versions</h2>
+        <button class="secondary" data-page="home">← Back</button>
+      </div>
 
-  <section id="gamesPage" class="hidden">
-    <div class="panel">
-      <button onclick="showPage('home')">← Back</button>
-      <h2>Game / Website Tester</h2>
-      <p>Enter an HTTPS URL for a site that allows embedding.</p>
+      <div class="listitem">
+        <strong>Version 1.02</strong>
+        <p>Dark calculator hub, scientific functions, and embedded game tester.</p>
+        <span>Current version</span>
+      </div>
+      <p>Add future version notes here when you publish an update.</p>
+    </section>
+
+    <!-- Game tester -->
+    <section id="gamesPage" class="card hidden">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <h2>Game / website tester</h2>
+          <p>Enter a URL to try loading it inside the frame.</p>
+        </div>
+        <button class="secondary" data-page="home">← Back</button>
+      </div>
+
       <form id="embedForm">
-        <input id="embedUrl" type="url" placeholder="https://example.com"
-          autocomplete="url" required>
-        <button class="primary" type="submit">Load Website</button>
+        <input id="embedUrl" type="url" placeholder="https://example.com" required>
+        <button class="primary full" style="margin-top:10px" type="submit">
+          Load in frame
+        </button>
       </form>
-      <p id="embedStatus" class="small" aria-live="polite"></p>
-      <iframe id="gameFrame" title="Embedded website"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allow="fullscreen; gamepad"
-        class="hidden"></iframe>
-      <p class="small">
-        If the game stays on its loading screen, it may require a top-level
-        tab, third-party cookies, or permissions that an iframe cannot provide.
-      </p>
-      <button id="openDirect" class="hidden" type="button">
-        Open site in a new tab
+
+      <div id="embedStatus" class="status" role="status">
+        The frame is ready.
+      </div>
+
+      <div class="framebox">
+        <div id="frameCountdown" class="hidden">
+          <div>
+            <div>Preparing the embedded page</div>
+            <div id="embedCount" class="countnum">3</div>
+            <div class="status">Loading will begin when the countdown finishes.</div>
+          </div>
+        </div>
+
+        <iframe
+          id="gameFrame"
+          title="Embedded game tester"
+          src="about:blank"
+          allow="fullscreen; gamepad; autoplay"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <button id="closeEmbed" type="button" class="danger full" style="margin-top:10px">
+        ✕ Close Game
       </button>
-    </div>
-  </section>
-</main>
+
+      <p>
+        Some websites block embedding or need additional game files.
+        This tester loads the entered URL; it does not download and reconstruct
+        the website's entire game engine.
+      </p>
+    </section>
+
+    <footer>Fno Development</footer>
+  </main>
+</div>
 
 <script>
-const $ = id => document.getElementById(id);
+(() => {
+  const $ = id => document.getElementById(id);
 
-/* Three-second intro */
-(async function start() {
-  for (let i = 3; i >= 1; i--) {
-    $("countdown").textContent = `Starting in ${i}…`;
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  // 1. Initial countdown runs once when this page loads.
+  let startup = 3;
+
+  const startupTimer = setInterval(() => {
+    startup--;
+    $("startupCount").textContent = startup;
+
+    if (startup <= 0) {
+      clearInterval(startupTimer);
+      $("loading").classList.add("hidden");
+      $("login").classList.remove("hidden");
+      $("passcode").focus();
+    }
+  }, 1000);
+
+  // 2. Passcode: wrong entries don't lock the user out.
+  $("loginForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    if ($("passcode").value === "0001") {
+      $("loginStatus").textContent = "";
+      $("login").classList.add("hidden");
+      $("app").classList.remove("hidden");
+      showPage("home");
+    } else {
+      $("loginStatus").textContent = "Incorrect code. Try again.";
+      $("passcode").value = "";
+      $("passcode").focus();
+    }
+  });
+
+  // Page navigation
+  function showPage(page) {
+    ["home", "versions", "games"].forEach(name => {
+      $(name + "Page").classList.toggle("hidden", name !== page);
+    });
   }
-  $("loading").classList.add("hidden");
-  $("login").classList.remove("hidden");
-})();
 
-/* Passcode: this is a simple interface lock, not secure authentication. */
-$("loginForm").addEventListener("submit", event => {
-  event.preventDefault();
-  if ($("passcode").value === "0001") {
-    $("login").classList.add("hidden");
-    $("app").classList.remove("hidden");
-  } else {
-    $("loginError").textContent = "Incorrect passcode. Try again.";
-    $("passcode").select();
-  }
-});
+  document.querySelectorAll("[data-page]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.page));
+  });
 
-function showPage(page) {
-  $("homePage").classList.toggle("hidden", page !== "home");
-  $("versionsPage").classList.toggle("hidden", page !== "versions");
-  $("gamesPage").classList.toggle("hidden", page !== "games");
-}
+  // 3. Calculator
+  const display = $("calcDisplay");
+  let justEvaluated = false;
 
-/* Calculator */
-const display = $("calcDisplay");
-let justCalculated = false;
+  function insert(value) {
+    let current = display.value;
 
-function insertValue(value) {
-  let current = display.value;
+    if (current === "Error") current = "0";
 
-  if (current === "Error" || justCalculated) {
-    current = "0";
-    justCalculated = false;
-  }
+    // After an answer, a new number starts a fresh calculation.
+    if (justEvaluated && /^[0-9.]$/.test(value)) current = "0";
+    justEvaluated = false;
 
-  if (/^\d$/.test(value)) {
-    if (current === "0") {
+    // Replace a lone leading zero when the user types a digit.
+    if (/^[0-9]$/.test(value) && current === "0") {
       display.value = value;
-    } else if (current === "-0") {
-      display.value = "-" + value;
-    } else {
-      display.value += value;
-    }
-    return;
-  }
-
-  if (value === ".") {
-    const lastNumber = current.split(/[+\-*/()]/).pop();
-    if (lastNumber.includes(".")) return;
-    if (current === "0") {
+    } else if (value === "." && (current === "" || current === "0")) {
       display.value = "0.";
+    } else if (value === "pi" && current === "0") {
+      display.value = "pi";
     } else {
-      display.value += ".";
+      display.value = current + value;
     }
-    return;
   }
 
-  if (["+", "-", "*", "/"].includes(value)) {
-    if (current === "0" && value !== "-") {
-      display.value = "0" + value;
-    } else {
-      display.value += value;
+  function calculate() {
+    let expression = display.value.trim();
+    if (!expression) return;
+
+    try {
+      expression = expression
+        .replace(/π/g, "pi")
+        .replace(/\^/g, "**");
+
+      if (!/^[0-9+\-*/().,%\sA-Za-z_]*$/.test(expression)) {
+        throw new Error("Invalid characters");
+      }
+
+      const checked = expression.replace(
+        /\b(sin|cos|tan|sqrt|log|abs|pi)\b/g, ""
+      );
+
+      if (/[A-Za-z_]/.test(checked)) {
+        throw new Error("Unknown function");
+      }
+
+      const evaluate = new Function(
+        "sin", "cos", "tan", "sqrt", "log", "abs", "pi",
+        '"use strict"; return (' + expression + ');'
+      );
+
+      const result = evaluate(
+        Math.sin, Math.cos, Math.tan, Math.sqrt,
+        x => Math.log10(x), Math.abs, Math.PI
+      );
+
+      if (typeof result !== "number" || !Number.isFinite(result)) {
+        throw new Error("Invalid result");
+      }
+
+      display.value = String(Number(result.toPrecision(12)));
+      $("calcStatus").textContent = "";
+      justEvaluated = true;
+    } catch {
+      display.value = "Error";
+      $("calcStatus").textContent = "That expression could not be calculated.";
+      justEvaluated = true;
     }
-    return;
   }
 
-  display.value += value;
-}
+  $("keys").addEventListener("click", event => {
+    const button = event.target.closest("button");
+    if (!button) return;
 
-function calculate(expression) {
-  const cleaned = expression.replace(/\s/g, "");
-  if (!cleaned || !/^[0-9+\-*/().]+$/.test(cleaned)) {
-    throw new Error("Invalid expression");
-  }
-  if (/[+\-*/.]$/.test(cleaned)) {
-    throw new Error("Incomplete expression");
-  }
-
-  // Only allow arithmetic characters after validation.
-  const result = Function('"use strict"; return (' + cleaned + ')')();
-  if (typeof result !== "number" || !Number.isFinite(result)) {
-    throw new Error("Invalid result");
-  }
-  return Number.parseFloat(result.toPrecision(12)).toString();
-}
-
-$("calculatorKeys").addEventListener("click", event => {
-  const button = event.target.closest("button");
-  if (!button) return;
-
-  const value = button.dataset.value;
-  const action = button.dataset.action;
-
-  if (value !== undefined) {
-    insertValue(value);
-    return;
-  }
-
-  try {
-    const number = Number(display.value);
-    switch (action) {
-      case "clear":
-        display.value = "0";
-        justCalculated = false;
-        break;
-      case "back":
-        display.value = display.value.length > 1
-          ? display.value.slice(0, -1) : "0";
-        if (display.value === "-") display.value = "0";
-        justCalculated = false;
-        break;
-      case "equals":
-        display.value = calculate(display.value);
-        justCalculated = true;
-        break;
-      case "sqrt":
-        if (number < 0) throw new Error("Invalid square root");
-        display.value = String(Math.sqrt(number));
-        justCalculated = true;
-        break;
-      case "square":
-        display.value = String(number * number);
-        justCalculated = true;
-        break;
-      case "sin":
-        display.value = String(Math.sin(number * Math.PI / 180));
-        justCalculated = true;
-        break;
-      case "cos":
-        display.value = String(Math.cos(number * Math.PI / 180));
-        justCalculated = true;
-        break;
-      case "tan":
-        display.value = String(Math.tan(number * Math.PI / 180));
-        justCalculated = true;
-        break;
-      case "log":
-        if (number <= 0) throw new Error("Invalid logarithm");
-        display.value = String(Math.log10(number));
-        justCalculated = true;
-        break;
-      case "ln":
-        if (number <= 0) throw new Error("Invalid logarithm");
-        display.value = String(Math.log(number));
-        justCalculated = true;
-        break;
-      case "pi":
-        display.value = String(Math.PI);
-        justCalculated = true;
-        break;
+    if (button.dataset.value !== undefined) {
+      insert(button.dataset.value);
+    } else if (button.dataset.action === "clear") {
+      display.value = "0";
+      $("calcStatus").textContent = "";
+      justEvaluated = false;
+    } else if (button.dataset.action === "delete") {
+      display.value = display.value.length > 1
+        ? display.value.slice(0, -1)
+        : "0";
+      justEvaluated = false;
+    } else if (button.dataset.action === "sign") {
+      display.value = display.value.startsWith("-")
+        ? display.value.slice(1)
+        : (display.value === "0" ? "0" : "-" + display.value);
+      justEvaluated = false;
+    } else if (button.dataset.action === "equals") {
+      calculate();
     }
-  } catch (error) {
-    display.value = "Error";
-    justCalculated = true;
-  }
-});
+  });
 
-/* Allow typing expressions directly into the display. */
-display.addEventListener("input", () => {
-  justCalculated = false;
-});
+  document.querySelectorAll("[data-fn]").forEach(button => {
+    button.addEventListener("click", () => {
+      insert(button.dataset.fn);
+    });
+  });
 
-/* Game tester: does not bypass embedding restrictions. */
-$("embedForm").addEventListener("submit", event => {
-  event.preventDefault();
-
-  let url;
-  try {
-    url = new URL($("embedUrl").value.trim());
-    if (url.protocol !== "https:") {
-      throw new Error("Use an HTTPS URL.");
+  display.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      calculate();
     }
-  } catch (error) {
-    $("embedStatus").textContent = error.message || "Enter a valid URL.";
-    return;
+  });
+
+  display.addEventListener("input", () => {
+    justEvaluated = false;
+  });
+
+  // 4. Game tester countdown: blank frame first, URL loads after 3 seconds.
+  let embedTimer = null;
+  let loadNoticeTimer = null;
+  let requestNumber = 0;
+
+  function clearEmbedTimers() {
+    if (embedTimer) clearInterval(embedTimer);
+    if (loadNoticeTimer) clearTimeout(loadNoticeTimer);
+    embedTimer = null;
+    loadNoticeTimer = null;
+    $("frameCountdown").classList.add("hidden");
   }
 
-  $("embedStatus").textContent =
-    "Attempting to load. Some websites do not permit embedding.";
-  $("gameFrame").classList.remove("hidden");
-  $("gameFrame").src = url.href;
-  $("openDirect").classList.remove("hidden");
-  $("openDirect").onclick = () => window.open(url.href, "_blank", "noopener");
-});
+  $("embedForm").addEventListener("submit", event => {
+    event.preventDefault();
+    clearEmbedTimers();
+
+    let url;
+    try {
+      url = new URL($("embedUrl").value.trim());
+    } catch {
+      $("embedStatus").textContent = "Enter a valid website URL.";
+      return;
+    }
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      $("embedStatus").textContent =
+        "Use a URL starting with http:// or https://.";
+      return;
+    }
+
+    const thisRequest = ++requestNumber;
+    const targetUrl = url.href;
+
+    // Start with a genuinely blank iframe.
+    $("gameFrame").src = "about:blank";
+    $("frameCountdown").classList.remove("hidden");
+
+    let count = 3;
+    $("embedCount").textContent = count;
+    $("embedStatus").textContent = "Preparing the frame…";
+
+    embedTimer = setInterval(() => {
+      count--;
+      $("embedCount").textContent = Math.max(count, 0);
+
+      if (count <= 0) {
+        clearInterval(embedTimer);
+        embedTimer = null;
+        $("frameCountdown").classList.add("hidden");
+
+        if (thisRequest !== requestNumber) return;
+
+        $("embedStatus").textContent = "Loading the requested page…";
+
+        // This loads the entered site in the iframe; it doesn't copy all
+        // of that site's source files or assets into about:blank.
+        $("gameFrame").src = targetUrl;
+
+        loadNoticeTimer = setTimeout(() => {
+          if (thisRequest === requestNumber) {
+            $("embedStatus").textContent =
+              "Still blank? This website may block embedding or require resources unavailable in a frame.";
+          }
+        }, 12000);
+      }
+    }, 1000);
+  });
+
+  // 5. Close game and reset iframe to blank.
+  $("closeEmbed").addEventListener("click", () => {
+    requestNumber++;
+    clearEmbedTimers();
+    $("gameFrame").src = "about:blank";
+    $("embedStatus").textContent =
+      "Game closed. Enter another URL to try again.";
+  });
+})();
 </script>
 </body>
 </html>
