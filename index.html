@@ -40,35 +40,17 @@ body.viewer-fullscreen{padding:0!important}
 </head>
 <body>
 <div class="wrap">
-
-<section class="card" id="startup">
-<h1>Unknown's Learning Hub</h1>
-<p>Preparing your workspace...</p>
-<div id="startupCount">3</div>
-<p class="small">Please wait.</p>
-</section>
-
-<section class="card hidden" id="login">
-<h1>Unknown's Learning Hub</h1>
-<p>Enter your passcode to continue.</p>
-<form id="loginForm">
-<input id="passcode" type="password" placeholder="Passcode" autocomplete="off">
-<button class="primary" type="submit">Continue</button>
-</form>
-<p class="small" id="loginStatus"></p>
-</section>
-
-<main id="app" class="hidden">
+<main id="app">
 <section class="card">
 <h1>Unknown's Learning Hub</h1>
 <p>Your tools, all in one place.</p>
 <div class="row">
 <button id="showCalc" type="button">Calculator</button>
 <button class="secondary" id="showVersions" type="button">Versions</button>
-<button class="secondary" id="showLearning" type="button">Learning</button>
+<button class="secondary hidden" id="showLearning" type="button">Learning</button>
 </div>
 <div class="row" style="margin-top:8px">
-<button class="secondary" id="showCode" type="button">Embed Code</button>
+<button class="secondary hidden" id="showCode" type="button">Embed Code</button>
 </div>
 </section>
 
@@ -156,56 +138,10 @@ body.viewer-fullscreen{padding:0!important}
 
 const $ = id => document.getElementById(id);
 
-let startupTimer = null;
 let learningTimer = null;
 let codeTimer = null;
 let learningRequestNumber = 0;
 let codeRequestNumber = 0;
-
-function startStartupCountdown(){
-  if(startupTimer !== null) clearInterval(startupTimer);
-
-  let count = 3;
-  $("startupCount").textContent = String(count);
-  $("startup").classList.remove("hidden");
-  $("login").classList.add("hidden");
-  $("app").classList.add("hidden");
-
-  startupTimer = setInterval(() => {
-    count--;
-    $("startupCount").textContent = String(Math.max(count,0));
-
-    if(count <= 0){
-      clearInterval(startupTimer);
-      startupTimer = null;
-      $("startup").classList.add("hidden");
-      $("login").classList.remove("hidden");
-      $("passcode").value = "";
-      $("loginStatus").textContent = "";
-      $("passcode").focus();
-    }
-  },1000);
-}
-
-function unlock(){
-  if($("passcode").value === "0001"){
-    $("loginStatus").textContent = "";
-    $("login").classList.add("hidden");
-    $("startup").classList.add("hidden");
-    $("app").classList.remove("hidden");
-    showPage("calc");
-    $("passcode").value = "";
-  }else{
-    $("loginStatus").textContent = "Incorrect passcode.";
-    $("passcode").value = "";
-    $("passcode").focus();
-  }
-}
-
-$("loginForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  unlock();
-});
 
 function showPage(page){
   $("calc").classList.toggle("hidden",page !== "calc");
@@ -231,9 +167,55 @@ document.querySelectorAll("[data-back]").forEach(button=>{
 });
 
 const display = $("display");
+let embedUnlocked = false;
 
+function revealEmbedTools(){
+  embedUnlocked = true;
+  $("showLearning").classList.remove("hidden");
+  $("showCode").classList.remove("hidden");
+}
+
+function hideEmbedTools(){
+  clearLearningTimer();
+  clearCodeTimer();
+  $("learningFrame").src = "about:blank";
+  $("learningFrame").classList.add("hidden");
+  $("codeFrame").srcdoc = "";
+  $("codeFrame").src = "about:blank";
+  $("codeFrame").classList.add("hidden");
+  $("learningPanel").classList.add("hidden");
+  $("codePanel").classList.add("hidden");
+  $("calc").classList.remove("hidden");
+  $("versions").classList.add("hidden");
+  $("showLearning").classList.add("hidden");
+  $("showCode").classList.add("hidden");
+  embedUnlocked = false;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.ctrlKey && e.altKey){
+    e.preventDefault();
+    hideEmbedTools();
+  }
+},true);
+
+let unlockSequence = "";
 document.querySelectorAll("[data-val]").forEach(button=>{
   button.addEventListener("click",()=>{
+    const pressed = button.dataset.val;
+    if(pressed === "0" || pressed === "1") {
+      unlockSequence = (unlockSequence + pressed).slice(-4);
+      if(unlockSequence === "0001") {
+        display.value = "0";
+        unlockSequence = "";
+        revealEmbedTools();
+        showPage("calc");
+        return;
+      }
+    } else {
+      unlockSequence = "";
+    }
     if(["0","Invalid","Error"].includes(display.value)){
       display.value = "";
     }
@@ -244,6 +226,7 @@ document.querySelectorAll("[data-val]").forEach(button=>{
 document.querySelectorAll("[data-fn]").forEach(button=>{
   button.addEventListener("click",()=>{
     const fn = button.dataset.fn;
+    unlockSequence = "";
     const raw = display.value.trim();
 
     if(fn === "clear"){
@@ -455,7 +438,7 @@ document.addEventListener("fullscreenchange",()=>{
   }
 });
 
-startStartupCountdown();
+
 
 })();
 </script>
