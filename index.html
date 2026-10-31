@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Unknown's Learning Hub</title>
+<title>Loading Educational Resources...</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:linear-gradient(160deg,#090b12,#151b2b);color:#f4f6ff;font-family:Arial,sans-serif;padding:20px}
@@ -135,6 +136,89 @@ body.viewer-fullscreen{padding:0!important}
 <script>
 (function(){
 "use strict";
+
+/* RANDOM EDUCATIONAL WEBSITE TITLE GENERATOR */
+const titleStarts = [
+  "Verified",
+  "Advanced",
+  "Digital",
+  "Online",
+  "Smart",
+  "Modern",
+  "Academic",
+  "Interactive",
+  "Official",
+  "Student",
+  "Essential",
+  "Premium",
+  "Ultimate",
+  "Virtual",
+  "Bright",
+  "Universal",
+  "Quick",
+  "Pro",
+  "Elite",
+  "Classroom"
+];
+
+const titleSubjects = [
+  "Calculator",
+  "Math Center",
+  "Learning Hub",
+  "Study Portal",
+  "Education Center",
+  "Math Resources",
+  "Study Tools",
+  "Academic Portal",
+  "Learning Center",
+  "Calculator Hub",
+  "Student Resources",
+  "Digital Classroom",
+  "Math Workspace",
+  "Homework Center",
+  "Study Station",
+  "Knowledge Hub",
+  "Academic Tools",
+  "Learning Portal",
+  "Math Station",
+  "School Resources"
+];
+
+const specialTitles = [
+  "Calculator?aa",
+  "Calculator Verified",
+  "Calculator Pro",
+  "Math Portal Online",
+  "Study Center 24",
+  "Academic Calculator",
+  "Digital Math Tools",
+  "Learning Resources Online",
+  "Student Calculator",
+  "Verified Study Tools"
+];
+
+function generateEducationalTitle(){
+  const random = Math.random();
+
+  if(random < 0.20){
+    return specialTitles[
+      Math.floor(Math.random() * specialTitles.length)
+    ];
+  }
+
+  const start = titleStarts[
+    Math.floor(Math.random() * titleStarts.length)
+  ];
+
+  const subject = titleSubjects[
+    Math.floor(Math.random() * titleSubjects.length)
+  ];
+
+  return start + " " + subject;
+}
+
+// Change the browser tab title on every page load.
+document.title = generateEducationalTitle();
 
 const $ = id => document.getElementById(id);
 
@@ -437,8 +521,6 @@ document.addEventListener("fullscreenchange",()=>{
     document.body.classList.remove("viewer-fullscreen");
   }
 });
-
-
 
 })();
 </script>
